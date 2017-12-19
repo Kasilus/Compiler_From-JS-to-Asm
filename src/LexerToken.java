@@ -6,7 +6,7 @@ public class LexerToken {
 
     private String name, value;
     private Type type;
-    private int position;
+    private Position position;
 
     public LexerToken(String name, String value, Type type) {
         this.name = name;
@@ -14,7 +14,7 @@ public class LexerToken {
         this.type = type;
     }
 
-    public LexerToken(String name, String value, Type type, int position) {
+    public LexerToken(String name, String value, Type type, Position position) {
         this.name = name;
         this.value = value;
         this.type = type;
@@ -45,11 +45,11 @@ public class LexerToken {
         this.type = type;
     }
 
-    public int getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 }

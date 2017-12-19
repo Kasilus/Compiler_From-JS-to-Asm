@@ -6,6 +6,9 @@ public class JavaScriptLexer implements Lexer {
     private LexerToken[] tokens;
     private List<LexerToken> lexemeTable;
     private final int MAX_SYMBOL_LENGTH = 3;
+    private String expression;
+    private int currentRow = 1;
+    private int currentCol = 1;
 
     /**
      * Init tokens for javascript lexer
@@ -105,7 +108,7 @@ public class JavaScriptLexer implements Lexer {
     }
 
     @Override
-    public void analise(String expression) throws LexicalException {
+    public void analise() throws LexicalException {
 
         int currentPosition = 0;
         char currentCharacter = expression.charAt(currentPosition);
@@ -121,6 +124,7 @@ public class JavaScriptLexer implements Lexer {
             // check if space
             if (currentCharacter == ' ') {
                 if (currentPosition < expression.length() - 1) {
+                    currentCol++;
                     currentPosition++;
                     currentCharacter = expression.charAt(currentPosition);
                 }
@@ -135,18 +139,18 @@ public class JavaScriptLexer implements Lexer {
 
                     if (currentPosition < expression.length() - 1) {
 
+                        currentCol++;
                         currentPosition++;
 
                         if (Character.isLetter(expression.charAt(currentPosition))) {
-                            throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.");
+                            throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.", new Position(currentRow, currentCol));
                         }
 
                     }
                 } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)));
 
 
-                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, currentPosition - currentLexeme.length()));
-//                currentPosition++;
+                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, new Position((currentRow), currentCol - currentLexeme.length())));
                 continue outerLoop;
 
             }
@@ -161,6 +165,7 @@ public class JavaScriptLexer implements Lexer {
 
                     if (currentPosition < expression.length() - 1) {
 
+                        currentCol++;
                         currentPosition++;
 
                     }
@@ -170,15 +175,14 @@ public class JavaScriptLexer implements Lexer {
 
                 for (int i = 0; i < tokens.length; i++) {
                     if (tokens[i].getValue().equals(currentLexeme)) {
-                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, currentPosition - currentLexeme.length() + 1));
+                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, new Position(currentRow, currentCol - currentLexeme.length() + 1)));
 //                        currentPosition++;
                         continue outerLoop;
                     }
                 }
 
 
-                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, currentPosition - currentLexeme.length() + 1));
-//                currentPosition++;
+                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, new Position(currentRow, currentCol - currentLexeme.length() + 1)));
                 continue;
 
 
@@ -189,7 +193,6 @@ public class JavaScriptLexer implements Lexer {
 
                 LexerToken symbolToken = null;
                 int currentSymbolLength = 1;
-
 
                 currentLexeme += currentCharacter;
 
@@ -203,6 +206,7 @@ public class JavaScriptLexer implements Lexer {
                     }
 
                     if (currentPosition < expression.length() - 1) {
+                        currentCol++;
                         currentPosition++;
                     }
 
@@ -216,19 +220,31 @@ public class JavaScriptLexer implements Lexer {
 
 
                 if (symbolToken != null) {
-                    lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), currentPosition - currentLexeme.length() + 1));
+                    lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), new Position((currentRow), currentCol - currentLexeme.length() + 1)));
                     // correction of cur pos
+                    currentCol = currentCol - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
                     currentPosition = currentPosition - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
                     currentCharacter = expression.charAt(currentPosition);
                     continue outerLoop;
                 } else {
-                    throw new LexicalException("Unexpected symbol combination!");
+                    currentCol = currentCol - MAX_SYMBOL_LENGTH + 1;
+                    throw new LexicalException("Unexpected symbol combination!", new Position(currentRow, currentCol));
                 }
 
             }
 
+            if (currentCharacter == '\n'){
+
+                    currentRow++;
+                    currentCol = 1;
+                    currentPosition++;
+                    currentCharacter = expression.charAt(currentPosition);
+                    continue outerLoop;
+
+            }
+
             // throw exception if mismatch
-            throw new LexicalException("Unexpected character! : '" + currentLexeme + "'");
+            throw new LexicalException("Unexpected character! : '" + currentLexeme + "'", new Position(currentRow, currentCol));
 
 
         }
@@ -242,8 +258,20 @@ public class JavaScriptLexer implements Lexer {
             return;
         }
 
-        for (LexerToken token : lexemeTable){
-            System.out.print(token.getValue() + " ");
+        String[] rows = expression.split("\n");
+
+//        for (LexerToken token : lexemeTable){
+//
+//            if (token.getPosition().getRow() != currentRow){
+//                System.out.println();
+//                currentRow = token.getPosition().getRow();
+//            }
+//
+//            System.out.printf(token.getValue() + " ");
+//        }
+
+        for (int i = 0 ; i < rows.length; i++){
+            System.out.println(rows[i]);
         }
 
         System.out.println();
@@ -255,9 +283,16 @@ public class JavaScriptLexer implements Lexer {
             return;
         }
 
+
         for (LexerToken token : lexemeTable){
+
             System.out.print(token.getValue() + "\t\t\t\t|" + token.getName() + "\n");
         }
+    }
+
+    @Override
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
 
