@@ -134,6 +134,8 @@ public class JavaScriptLexer implements Lexer {
 
             if (Character.isDigit(currentCharacter)) {
 
+                boolean hasPoint = false;
+
                 do {
                     currentLexeme += currentCharacter;
 
@@ -144,10 +146,18 @@ public class JavaScriptLexer implements Lexer {
 
                         if (Character.isLetter(expression.charAt(currentPosition))) {
                             throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.", new Position(currentRow, currentCol));
+                        } else if (currentCharacter == '.'){
+                            if (!hasPoint) {
+                                hasPoint = true;
+                            } else {
+                                throw new LexicalException("Allowed just one point in a constant", new Position(currentRow, currentCol));
+                            }
                         }
 
+
+
                     }
-                } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)));
+                } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)) || currentCharacter == '.');
 
 
                 lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, new Position((currentRow), currentCol - currentLexeme.length())));
@@ -259,16 +269,6 @@ public class JavaScriptLexer implements Lexer {
         }
 
         String[] rows = expression.split("\n");
-
-//        for (LexerToken token : lexemeTable){
-//
-//            if (token.getPosition().getRow() != currentRow){
-//                System.out.println();
-//                currentRow = token.getPosition().getRow();
-//            }
-//
-//            System.out.printf(token.getValue() + " ");
-//        }
 
         for (int i = 0 ; i < rows.length; i++){
             System.out.println(rows[i]);
