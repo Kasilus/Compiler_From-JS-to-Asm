@@ -18,5 +18,10 @@ public interface Lexer {
     public void analise(String expression) throws LexicalException;
 
 
+    public void outputExpression();
+
+    public void outputLexerTable();
+
+
 
 }

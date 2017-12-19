@@ -5,6 +5,7 @@ public class JavaScriptLexer implements Lexer {
 
     private LexerToken[] tokens;
     private List<LexerToken> lexemeTable;
+    private final int MAX_SYMBOL_LENGTH = 3;
 
     /**
      * Init tokens for javascript lexer
@@ -80,7 +81,7 @@ public class JavaScriptLexer implements Lexer {
 
                 // reserved words
                 // variable
-                new LexerToken("VARIABLE", "var", LexerToken.Type.WORD),
+                new LexerToken("VARIABLE TYPE", "var", LexerToken.Type.WORD),
                 // branching
                 new LexerToken("IF", "if", LexerToken.Type.WORD),
                 new LexerToken("ELSE", "else", LexerToken.Type.WORD),
@@ -107,7 +108,7 @@ public class JavaScriptLexer implements Lexer {
     public void analise(String expression) throws LexicalException {
 
         int currentPosition = 0;
-        char currentCharacter;
+        char currentCharacter = expression.charAt(currentPosition);
         String currentLexeme = "";
 
 
@@ -115,12 +116,13 @@ public class JavaScriptLexer implements Lexer {
         outerLoop:
         while (currentPosition < expression.length() - 1) {
 
-            currentCharacter = expression.charAt(currentPosition);
+            currentLexeme = "";
 
             // check if space
             if (currentCharacter == ' ') {
                 if (currentPosition < expression.length() - 1) {
                     currentPosition++;
+                    currentCharacter = expression.charAt(currentPosition);
                 }
                 continue;
             }
@@ -143,18 +145,119 @@ public class JavaScriptLexer implements Lexer {
                 } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)));
 
 
-                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, currentPosition));
-                currentPosition++;
+                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, currentPosition - currentLexeme.length()));
+//                currentPosition++;
                 continue outerLoop;
+
+            }
+
+            // check variables, keywords and symbols
+
+            // firstly, check words and vars
+            if (String.valueOf(currentCharacter).matches("[A-Za-z$_]")) {
+
+                do {
+                    currentLexeme += currentCharacter;
+
+                    if (currentPosition < expression.length() - 1) {
+
+                        currentPosition++;
+
+                    }
+
+                }
+                while (String.valueOf(currentCharacter = expression.charAt(currentPosition)).matches("[A-Za-z$_0-9]"));
+
+                for (int i = 0; i < tokens.length; i++) {
+                    if (tokens[i].getValue().equals(currentLexeme)) {
+                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, currentPosition - currentLexeme.length() + 1));
+//                        currentPosition++;
+                        continue outerLoop;
+                    }
+                }
+
+
+                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, currentPosition - currentLexeme.length() + 1));
+//                currentPosition++;
+                continue;
 
 
             }
+
+            // check symbols
+            if (String.valueOf(currentCharacter).matches("[+\\-*/&|^<>!=?{}\\[\\]()%.:;~]")) {
+
+                LexerToken symbolToken = null;
+                int currentSymbolLength = 1;
+
+
+                currentLexeme += currentCharacter;
+
+
+                do {
+
+                    for (int j = 0; j < tokens.length; j++) {
+                        if (tokens[j].getValue().equals(currentLexeme)) {
+                            symbolToken = tokens[j];
+                        }
+                    }
+
+                    if (currentPosition < expression.length() - 1) {
+                        currentPosition++;
+                    }
+
+                    currentSymbolLength++;
+
+                    currentCharacter = expression.charAt(currentPosition);
+                    currentLexeme += currentCharacter;
+
+                }
+                while (currentSymbolLength < MAX_SYMBOL_LENGTH);
+
+
+                if (symbolToken != null) {
+                    lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), currentPosition - currentLexeme.length() + 1));
+                    // correction of cur pos
+                    currentPosition = currentPosition - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
+                    currentCharacter = expression.charAt(currentPosition);
+                    continue outerLoop;
+                } else {
+                    throw new LexicalException("Unexpected symbol combination!");
+                }
+
+            }
+
+            // throw exception if mismatch
+            throw new LexicalException("Unexpected character! : '" + currentLexeme + "'");
+
+
         }
 
 
-        // check variables, keywords and symbols
+    }
 
+    @Override
+    public void outputExpression() {
+        if (lexemeTable == null){
+            return;
+        }
 
+        for (LexerToken token : lexemeTable){
+            System.out.print(token.getValue() + " ");
+        }
+
+        System.out.println();
+    }
+
+    @Override
+    public void outputLexerTable() {
+        if (lexemeTable == null){
+            return;
+        }
+
+        for (LexerToken token : lexemeTable){
+            System.out.print(token.getValue() + "\t\t\t\t|" + token.getName() + "\n");
+        }
     }
 
 
