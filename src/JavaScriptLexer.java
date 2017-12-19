@@ -118,39 +118,42 @@ public class JavaScriptLexer implements Lexer {
             currentCharacter = expression.charAt(currentPosition);
 
             // check if space
-            if (currentCharacter == ' '){
+            if (currentCharacter == ' ') {
                 if (currentPosition < expression.length() - 1) {
                     currentPosition++;
                 }
                 continue;
             }
 
-            currentLexeme += currentCharacter;
-            if (currentPosition < expression.length() - 1) {
-                currentPosition++;
-            }
 
             if (Character.isDigit(currentCharacter)) {
 
-                // check if constant
-                while (Character.isDigit(currentCharacter = expression.charAt(currentPosition))) {
+                do {
                     currentLexeme += currentCharacter;
+
                     if (currentPosition < expression.length() - 1) {
+
                         currentPosition++;
-                    } else {
-                        lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, currentPosition));
-                        currentPosition++;
-                        continue outerLoop;
+
+                        if (Character.isLetter(expression.charAt(currentPosition))) {
+                            throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.");
+                        }
+
                     }
+                } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)));
 
-                }
+
+                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, currentPosition));
+                currentPosition++;
+                continue outerLoop;
+
+
             }
-
-
-            // check variables, keywords and symbols
-
-
         }
+
+
+        // check variables, keywords and symbols
+
 
     }
 
