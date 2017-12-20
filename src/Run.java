@@ -10,6 +10,8 @@ public class Run {
         lexer.analise();
         lexer.outputLexerTable();
 
+        Parser parser = new JavaScriptParser();
+
     }
 
 }
