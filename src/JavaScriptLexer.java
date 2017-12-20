@@ -218,14 +218,14 @@ public class JavaScriptLexer implements Lexer {
                         }
                     }
 
-                    if (currentCol < expression.length()) {
-                        currentPosition++;
-                    }
 
+                    currentPosition++;
                     currentCol++;
                     currentSymbolLength++;
 
-                    currentCharacter = expression.charAt(currentPosition);
+                    if (currentPosition < expression.length()) {
+                        currentCharacter = expression.charAt(currentPosition);
+                    }
                     currentLexeme += currentCharacter;
 
                 }
@@ -235,9 +235,9 @@ public class JavaScriptLexer implements Lexer {
                 if (symbolToken != null) {
                     lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), new Position((currentRow), currentCol - currentLexeme.length() + 1)));
                     // correction of cur pos
-                    currentPosition = currentCol - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length());
+                    currentPosition = currentPosition - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
                     currentCol = currentCol - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
-                    if (currentCol < expression.length()) {
+                    if (currentPosition < expression.length()) {
                         currentCharacter = expression.charAt(currentPosition);
                     }
                     continue outerLoop;

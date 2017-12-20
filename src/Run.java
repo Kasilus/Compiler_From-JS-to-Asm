@@ -4,7 +4,7 @@ public class Run {
 
     public static void main(String[] args) {
 
-        String expression = "{ var a = 12, b = 6; a = 2 + 2 *2;}";
+        String expression = "{ \n if (a = 12) \n b = 6; else \n a = 5; \n ; \n}";
 
 //        String expression = "{if (a + 2) b = 3 else g -2 ; a = 5;}";
         Lexer lexer = new JavaScriptLexer();
