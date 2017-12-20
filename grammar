@@ -1,12 +1,12 @@
 <program>::=<statement>
 <statement>::="var" <type-assignment>
-              "if" <paren-expr> <statement> |
-              "if" <paren-expr> <statement> "else" <statement>
-              "while" <paren-expr> <statement> |
-              "do" <statement> while <paren-expr> |
-              "{" <statement> "}" |
-              <expr> ";" |
-              ";"
+              "if" <paren-expression> <statement> |
+              "if" <paren-expression> <statement> "else" <statement>
+              "while" <paren-expression> <statement> |
+              "do" <statement> while <paren-expression> |
+              "{" <statement> "}" |                                                     V
+              <expression> ";" |                                                        V
+              ";"                                                                       V
               // place for "for" and "switch" and "ternary"
 <expression>::=<test4> |
          <assignment>
@@ -72,6 +72,6 @@
          <const> |
          <paren-expr> |
 <var> ::= ..variable-name..|
-          ..variable-name "[" <expr> "]"
+          ..variable-name "[" <expression> "]"
 <constant> ::= ..some constant..
-<paren-expr>::="("<expr>")"
+<paren-expression>::="("<expression>")"

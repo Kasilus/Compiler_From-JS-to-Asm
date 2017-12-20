@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Run {
 
     public static void main(String[] args) {
@@ -10,7 +12,14 @@ public class Run {
         lexer.analise();
         lexer.outputLexerTable();
 
+        ArrayList<LexerToken> lexemeTable = (ArrayList<LexerToken>) lexer.getLexemeTable();
+
         Parser parser = new JavaScriptParser();
+
+        if (lexemeTable.size() > 0){
+            parser.parse(lexemeTable);
+        }
+
 
     }
 
