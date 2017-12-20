@@ -120,7 +120,7 @@ public class JavaScriptLexer implements Lexer {
 
         // direct passage throw expression
         outerLoop:
-        while (currentPosition < expression.length() - 1) {
+        while (currentPosition < expression.length()) {
 
             currentLexeme = "";
 
@@ -188,14 +188,14 @@ public class JavaScriptLexer implements Lexer {
 
                 for (int i = 0; i < tokens.length; i++) {
                     if (tokens[i].getValue().equals(currentLexeme)) {
-                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, new Position(currentRow, currentCol - currentLexeme.length() + 1)));
+                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, new Position(currentRow, currentCol - currentLexeme.length())));
 //                        currentPosition++;
                         continue outerLoop;
                     }
                 }
 
 
-                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, new Position(currentRow, currentCol - currentLexeme.length() + 1)));
+                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, new Position(currentRow, currentCol - currentLexeme.length())));
                 continue;
 
 
@@ -218,11 +218,11 @@ public class JavaScriptLexer implements Lexer {
                         }
                     }
 
-                    if (currentPosition < expression.length() - 1) {
-                        currentCol++;
+                    if (currentCol < expression.length()) {
                         currentPosition++;
                     }
 
+                    currentCol++;
                     currentSymbolLength++;
 
                     currentCharacter = expression.charAt(currentPosition);
@@ -235,9 +235,11 @@ public class JavaScriptLexer implements Lexer {
                 if (symbolToken != null) {
                     lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), new Position((currentRow), currentCol - currentLexeme.length() + 1)));
                     // correction of cur pos
+                    currentPosition = currentCol - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length());
                     currentCol = currentCol - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
-                    currentPosition = currentPosition - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
-                    currentCharacter = expression.charAt(currentPosition);
+                    if (currentCol < expression.length()) {
+                        currentCharacter = expression.charAt(currentPosition);
+                    }
                     continue outerLoop;
                 } else {
                     currentCol = currentCol - MAX_SYMBOL_LENGTH + 1;
