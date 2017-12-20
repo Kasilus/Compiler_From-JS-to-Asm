@@ -43,7 +43,7 @@ public class JavaScriptLexer implements Lexer {
                 new LexerToken("ASSIGNMENT SUBTRACTION", "-=", LexerToken.Type.SYMBOL),
                 new LexerToken("ASSIGNMENT MULTIPLICATION", "*=", LexerToken.Type.SYMBOL),
                 new LexerToken("ASSIGNMENT DIVISION", "/=", LexerToken.Type.SYMBOL),
-                new LexerToken("ASSIGN REMAINDER", "%=", LexerToken.Type.SYMBOL),
+                new LexerToken("ASSIGNMENT REMAINDER", "%=", LexerToken.Type.SYMBOL),
                 // logical shifts
                 new LexerToken("SHIFT LEFT", "<<", LexerToken.Type.SYMBOL),
                 new LexerToken("SHIFT RIGHT", ">>", LexerToken.Type.SYMBOL),
@@ -102,6 +102,9 @@ public class JavaScriptLexer implements Lexer {
                 new LexerToken("STRING CHECK", "String", LexerToken.Type.WORD),
                 new LexerToken("NUMBER CHECK", "Number", LexerToken.Type.WORD),
                 new LexerToken("BOOLEAN CHECK", "Boolean", LexerToken.Type.WORD),
+                // null and unsigned
+                new LexerToken("NULL", "null", LexerToken.Type.WORD),
+                new LexerToken("UNSIGNED", "unsigned", LexerToken.Type.WORD),
 
 
         };

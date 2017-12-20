@@ -1,5 +1,4 @@
-public class Parser {
+package PACKAGE_NAME;
 
-
-
+public interface Parser {
 }
