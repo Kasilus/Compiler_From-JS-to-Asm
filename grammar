@@ -1,76 +1,73 @@
 <program>::=<statement>
-<statement>::="var" <type-assignment>
-              "if" <paren-expression> <statement> |
-              "if" <paren-expression> <statement> "else" <statement>
-              "while" <paren-expression> <statement> |
-              "do" <statement> while <paren-expression> |
+<statement>::="var" <type-assignment>                                                   V
+              "if" <paren-expression> <statement> |                                     V
+              "if" <paren-expression> <statement> "else" <statement>                    V
+              "while" <paren-expression> <statement> |                                  V
+              "do" <statement> while <paren-expression> |                               V
               "{" <statement> "}" |                                                     V
               <expression> ";" |                                                        V
               ";"                                                                       V
               // place for "for" and "switch" and "ternary"
 <expression>::=<test4> |
          <assignment>
-<assignment>::= <var> "=" <expression>
+<assignment>::= <var> "=" <expression>                                                  V
                 <var> = "{""}"|
                 <var> "=" "{" <object-fields> "," <object-field> "}"
-                <var> "+=" <expression> |
-                <var> "-=" <expression> |
-                <var> "*=" <expression> |
-                <var> "/=" <expression> |
+                <var> "+=" <expression> |                                               ?
+                <var> "-=" <expression> |                                               ?
+                <var> "*=" <expression> |                                               ?
+                <var> "/=" <expression> |                                               ?
                 <var> "%=" <expression> |
                 <var> "&=" <expression> |
                 <var> "^=" <expression> |
-                <var> "|=" <expression>
-<object-field> ::= "[" name: <test4> "]"
-<object-fields> ::= <object-field> |
-                    <object-fields> "," <object-field>
-<type-assignment> ::= <type-assignment> |
-                      <type-assignment> "," <assignment>
-<test4>::= <temp5>
-           <expr> "?" <test5> ":" <test5> |
+                <var> "|=" <expression>                                                 ?
+<type-assignment> ::= <assignment> |                                                    V
+                      <type-assignment> "," <assignment>                                V
+<temp4>::= <temp5> |
+<expr> "?" <test5> ":" <test5>                                                          !
 <temp5>::= <temp6> |
-           <temp5> "||" <temp6>
+           <temp5> "||" <temp6>                                                         V
 <temp6>::= <temp7> |
-           <temp6> "&&" <temp7>
+           <temp6> "&&" <temp7>                                                         V
 <temp7>::= <temp8> |
-           <temp7> "|" <temp8>
+           <temp7> "|" <temp8>                                                          V
 <temp8>::= <temp9> |
-           <temp8> "^" <temp9>
+           <temp8> "^" <temp9>                                                          V
 <temp9>::= <temp10> |
-           <temp9> "&" <temp10>
+           <temp9> "&" <temp10>                                                         V
 <temp10>::=<temp11> |
-           <temp10> "==" <temp11> |
-           <temp10> "!=" <temp11> |
-           <temp10> "===" <temp11> |
-           <temp10> "!==" <temp11>
+           <temp10> "==" <temp11> |                                                     V
+           <temp10> "!=" <temp11> |                                                     V
+           <temp10> "===" <temp11> |                                                    V
+           <temp10> "!==" <temp11>                                                      V
 <temp11>::=<temp12> |
-           <temp11> "<" <temp12> |
-           <temp11> "<=" <temp12> |
-           <temp11> ">" <temp12> |
-           <temp11> "<" <temp12>
+           <temp11> "<" <temp12> |                                                      V
+           <temp11> "<=" <temp12> |                                                     V
+           <temp11> ">" <temp12> |                                                      V
+           <temp11> ">=" <temp12>                                                       V
 <temp12>::=<temp13> |
            <temp12> "<<" <temp13> |
            <temp12> ">>" <temp13> |
            <temp12> ">>>" <temp13>
 <temp13>::=<temp14> |
-           <temp13> "+" <temp14> |
-           <temp13> "-" <temp14>
+           <temp13> "+" <temp14> |                                                     ?V
+           <temp13> "-" <temp14>                                                       ?V
 <temp14>::=<temp16> |
-           <temp14> "*" <temp16> |
-           <temp14> "/" <temp16> |
-           <temp14> "%" <temp16>
+           <temp14> "*" <temp16> |                                                      V
+           <temp14> "/" <temp16> |                                                      V
+           <temp14> "%" <temp16>                                                        V
 <temp16>::=<temp17> |
            "!" <temp16> |
            "~" <temp16> |
-           "unary (+/-)" <temp16> |
-           "++" <var> |
-           "--" <var>
+           "unary (+/-)" <temp16> |                                                     V
+           "++" <var> |                                                                 ?
+           "--" <var>                                                                   ?
 <temp17>::=<term>
-           <var> "++" |
-           <var> "--"
-<term>::=<var> |
-         <const> |
-         <paren-expr> |
+           <var> "++" |                                                                 ?
+           <var> "--"                                                                   ?
+<term>::=<var> |                                                                        V
+         <const> |                                                                      V
+         <paren-expr> |                                                                 V
 <var> ::= ..variable-name..|
           ..variable-name "[" <expression> "]"
 <constant> ::= ..some constant..

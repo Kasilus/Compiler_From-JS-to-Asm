@@ -4,13 +4,14 @@ public class TreeNode {
     String value;
     TreeNode op1;
     TreeNode op2;
+    TreeNode op3;
     Position position;
 
     enum Type {
         EMPTY,PROGRAM, STATEMENT, EXPRESSION, TEST, VARIABLE, CONSTANT,
         ADDITION("+"), SUBTRACTION("-"), MULTIPLICATION("*"),
         DIVISION("/"), REMAINDER("%"), INCREMENT("++"), DECREMENT("--"),
-        BITWISE_END("&"), BITWISE_XOR("^"), BITWISE_OR("|"),
+        BITWISE_AND("&"), BITWISE_XOR("^"), BITWISE_OR("|"),
         LOGICAL_NOT("!"), BITWISE_NOT("~"), LOGICAL_AND("&&"),
         LOGICAL_OR("||"), ASSIGNMENT("="), ASSIGNMENT_ADDITION("+="),
         ASSIGNMENT_SUBTRACTION("-="), ASSIGNMENT_MULTIPLICATION("*="),
@@ -18,6 +19,7 @@ public class TreeNode {
         SHIFT_LEFT("<<"), SHIFT_RIGHT(">>"), SHIFT_RIGHT_ZERO_FILL(">>>"),
         ASSIGNMENT_BITWISE_AND("&="), ASSIGNMENT_BITWISE_XOR("^="),
         ASSIGNMENT_BITWISE_OR("|="), EQUALITY("=="), STRICT_EQUALITY("==="),
+        NON_EQUALITY("!="), STRICT_NON_EQUALTIY("!=="),
         GREATER_THAN(">"), LESS_THAN("<"), GREATER_THAN_OR_EQUALS(">="),
         LESS_THAN_OR_EQUALS("<="), THERNARY_OPERATOR("?"),COMMA(","),
         VARIABLE_TYPE("var"), IF, IF_ELSE, WHILE, DO_WHILE, SWITCH_CASE, FOR,
@@ -55,6 +57,15 @@ public class TreeNode {
         this.value = value;
         this.op1 = op1;
         this.op2 = op2;
+        this.position = position;
+    }
+
+    public TreeNode(Type type, String value, TreeNode op1, TreeNode op2, TreeNode op3, Position position) {
+        this.type = type;
+        this.value = value;
+        this.op1 = op1;
+        this.op2 = op2;
+        this.op3 = op3;
         this.position = position;
     }
 
@@ -96,5 +107,13 @@ public class TreeNode {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public TreeNode getOp3() {
+        return op3;
+    }
+
+    public void setOp3(TreeNode op3) {
+        this.op3 = op3;
     }
 }

@@ -202,7 +202,7 @@ public class JavaScriptLexer implements Lexer {
             }
 
             // check symbols
-            if (String.valueOf(currentCharacter).matches("[+\\-*/&|^<>!=?{}\\[\\]()%.:;~]")) {
+            if (String.valueOf(currentCharacter).matches("[+\\-*/&|^<>!=?{}\\[\\]()%.:;~,]")) {
 
                 LexerToken symbolToken = null;
                 int currentSymbolLength = 1;
