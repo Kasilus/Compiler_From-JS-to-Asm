@@ -38,11 +38,14 @@ public class JavaScriptParser implements Parser {
         } else if (currentToken.getName().equals("SEMICOLON")) {
             node = new TreeNode(TreeNode.Type.EMPTY, null, null);
         } else if (currentToken.getName().equals("IF")) {
-            node = new TreeNode(TreeNode.Type.IF, null, parenExpr(), statement());
+
             currentToken = queue.pollFirst();
+            node = new TreeNode(TreeNode.Type.IF, null, parenExpr(), statement());
 
             if (currentToken.getName().equals("ELSE")) {
                 node.setType(TreeNode.Type.IF_ELSE);
+
+                currentToken = queue.pollFirst();
                 node.setOp3(statement());
             }
 
