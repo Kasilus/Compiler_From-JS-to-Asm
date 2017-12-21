@@ -105,6 +105,9 @@ public class JavaScriptLexer implements Lexer {
                 // null and unsigned
                 new LexerToken("NULL", "null", LexerToken.Type.WORD),
                 new LexerToken("UNSIGNED", "unsigned", LexerToken.Type.WORD),
+                // true and false values
+                new LexerToken("TRUE", "true", LexerToken.Type.WORD),
+                new LexerToken("FALSE", "false", LexerToken.Type.WORD)
 
 
         };
@@ -230,6 +233,13 @@ public class JavaScriptLexer implements Lexer {
 
                 }
                 while (currentSymbolLength < MAX_SYMBOL_LENGTH);
+
+                // need fix?
+                for (int j = 0; j < tokens.length; j++) {
+                    if (tokens[j].getValue().equals(currentLexeme)) {
+                        symbolToken = tokens[j];
+                    }
+                }
 
 
                 if (symbolToken != null) {

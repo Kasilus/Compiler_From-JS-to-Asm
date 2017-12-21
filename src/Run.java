@@ -6,7 +6,9 @@ public class Run {
 
 //        String expression = "{ \n if (a = 12) \n b = 6; else \n  a = 5; \n}";
 
-        String expression = "{var a = 15, b = false; a = 2 === b;}   ";
+//        String expression = "{var a = 15, b = false; a = 2 === b;}";
+
+        String expression = "{ var a = false; }";
 
 //        String expression = "{if (a + 2) b = 3 else g -2 ; a = 5;}";
         Lexer lexer = new JavaScriptLexer();

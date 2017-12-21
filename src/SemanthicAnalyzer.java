@@ -73,8 +73,12 @@ public class SemanthicAnalyzer {
                 Variable leftNode = (Variable) getNode(node.getOp1());
                 Node rightNode = getNode(node.getOp2());
 
-                Node.Type mainType = checkTypeCompatibility(leftNode, rightNode, node);
-                leftNode.setType(mainType);
+                if (currentType.name().equals("VARIABLE_TYPE")){
+                    leftNode.setType(rightNode.getType());
+                } else {
+                    Node.Type mainType = checkTypeCompatibility(leftNode, rightNode, node);
+                    leftNode.setType(mainType);
+                }
 
 
             } else if (node.getType() == TreeNode.Type.CONSTANT) {

@@ -390,7 +390,11 @@ public class JavaScriptParser implements Parser {
             node = new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
             currentToken = queue.pollFirst();
             return node;
-        } else {
+        } else if (currentToken.getName().equals("FALSE") || currentToken.getName().equals("TRUE")){
+            node = new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
+            currentToken = queue.pollFirst();
+            return node;
+        }else {
             return parenExpr();
         }
     }
