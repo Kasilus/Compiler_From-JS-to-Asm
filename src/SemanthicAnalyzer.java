@@ -2,16 +2,13 @@ import constructions.Constant;
 import constructions.Node;
 import constructions.Variable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class SemanthicAnalyzer {
 
     private List<Variable> vars = new ArrayList<>();
-    private Map<String, Variable> variableMap = new HashMap<>();
+    private Map<String, Variable> variableMap = new LinkedHashMap<>();
     private TreeNode.Type currentType;
 
     public Node checkTypes(TreeNode tree) {
@@ -19,6 +16,7 @@ public class SemanthicAnalyzer {
         return getNode(tree);
 
     }
+
 
 
     private Node getNode(TreeNode node) {
@@ -84,7 +82,7 @@ public class SemanthicAnalyzer {
             } else if (node.getType() == TreeNode.Type.CONSTANT) {
 
                 Node.Type type = recognizeType(node.getValue());
-                return new Constant("const", type, node.getValue());
+                return new Constant(node.getValue(), type);
 
 
             } else if (node.getType() == TreeNode.Type.ADDITION ||
@@ -105,9 +103,6 @@ public class SemanthicAnalyzer {
 
                 leftNode = getNode(node.getOp1());
                 rightNode = getNode(node.getOp2());
-
-//                Node.Type leftNodeType = leftNode.getType();
-//                Node.Type rightNodeType = rightNode.getType();
 
                 Node.Type mainType = checkTypeCompatibility(leftNode, rightNode, node);
 
@@ -185,6 +180,8 @@ public class SemanthicAnalyzer {
             } else {
                 mainType = Node.Type.Number;
             }
+        } else if (actionNode.getType() == TreeNode.Type.LESS_THAN || actionNode.getType() == TreeNode.Type.GREATER_THAN){
+            mainType = Node.Type.Boolean;
         }
 
 
@@ -194,6 +191,32 @@ public class SemanthicAnalyzer {
         }
 
         return mainType;
+    }
+
+
+
+    public List<Variable> getVars() {
+        return vars;
+    }
+
+    public void setVars(List<Variable> vars) {
+        this.vars = vars;
+    }
+
+    public Map<String, Variable> getVariableMap() {
+        return variableMap;
+    }
+
+    public void setVariableMap(Map<String, Variable> variableMap) {
+        this.variableMap = variableMap;
+    }
+
+    public TreeNode.Type getCurrentType() {
+        return currentType;
+    }
+
+    public void setCurrentType(TreeNode.Type currentType) {
+        this.currentType = currentType;
     }
 
 

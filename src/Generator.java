@@ -1,2 +1,5 @@
-public class Generator {
+public interface Generator {
+
+    public void generateCode(TreeNode tree);
+
 }
