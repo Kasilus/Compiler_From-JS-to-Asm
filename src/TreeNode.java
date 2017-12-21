@@ -1,11 +1,11 @@
 public class TreeNode {
 
-    Type type;
-    String value;
-    TreeNode op1;
-    TreeNode op2;
-    TreeNode op3;
-    Position position;
+    private Type type;
+    private String value;
+    private TreeNode op1;
+    private TreeNode op2;
+    private TreeNode op3;
+    private Position position;
 
     enum Type {
         EMPTY,PROGRAM, STATEMENT, EXPRESSION, TEST, VARIABLE, CONSTANT,
