@@ -10,7 +10,7 @@ public class Run {
 
 //        String expression = "{var a = 12; var b = 1; if (a > b) {a = a + b;} else {b = a + b;} }";
 
-        String expression = "{var a = 12; var b = 5; while (b>a) {b = b - 1; } }";
+        String expression = "{var a = 12; var b = 5; while (b>a) {b = b & 1; } }";
 
 //        String expression = "{var a = 12; var b = 5; do {b = b - 1; } while (b>a);  }";
 

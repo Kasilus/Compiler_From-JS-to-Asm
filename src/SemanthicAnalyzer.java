@@ -18,7 +18,6 @@ public class SemanthicAnalyzer {
     }
 
 
-
     private Node getNode(TreeNode node) {
 
 
@@ -71,7 +70,7 @@ public class SemanthicAnalyzer {
                 Variable leftNode = (Variable) getNode(node.getOp1());
                 Node rightNode = getNode(node.getOp2());
 
-                if (currentType != null){
+                if (currentType != null) {
                     leftNode.setType(rightNode.getType());
                 } else {
                     Node.Type mainType = checkTypeCompatibility(leftNode, rightNode, node);
@@ -95,6 +94,9 @@ public class SemanthicAnalyzer {
                     node.getType() == TreeNode.Type.STRICT_NON_EQUALTIY ||
                     node.getType() == TreeNode.Type.LOGICAL_AND ||
                     node.getType() == TreeNode.Type.LOGICAL_OR ||
+                    node.getType() == TreeNode.Type.BITWISE_AND ||
+                    node.getType() == TreeNode.Type.BITWISE_OR ||
+                    node.getType() == TreeNode.Type.BITWISE_XOR ||
                     node.getType() == TreeNode.Type.LESS_THAN ||
                     node.getType() == TreeNode.Type.GREATER_THAN
                     ) {
@@ -157,31 +159,34 @@ public class SemanthicAnalyzer {
         Node.Type leftNodeType = leftNode.getType();
         Node.Type rightNodeType = rightNode.getType();
 
-        if (actionNode.getType() == TreeNode.Type.ASSIGNMENT){
+        if (actionNode.getType() == TreeNode.Type.ASSIGNMENT) {
             mainType = rightNodeType;
-        } else if (actionNode.getType() == TreeNode.Type.STRICT_EQUALITY || actionNode.getType() == TreeNode.Type.STRICT_NON_EQUALTIY){
+        } else if (actionNode.getType() == TreeNode.Type.STRICT_EQUALITY || actionNode.getType() == TreeNode.Type.STRICT_NON_EQUALTIY) {
 
-            if (leftNodeType == rightNodeType){
+            if (leftNodeType == rightNodeType) {
                 mainType = leftNodeType;
             }
 
         } else if (actionNode.getType() == TreeNode.Type.ADDITION || actionNode.getType() == TreeNode.Type.SUBTRACTION ||
-                actionNode.getType() == TreeNode.Type.MULTIPLICATION || actionNode.getType() == TreeNode.Type.DIVISION){
+                actionNode.getType() == TreeNode.Type.MULTIPLICATION || actionNode.getType() == TreeNode.Type.DIVISION) {
             mainType = Node.Type.Number;
-        } else if (actionNode.getType() == TreeNode.Type.LOGICAL_AND){
-            if (leftNodeType == Node.Type.Number && rightNodeType == Node.Type.Number){
+        } else if (actionNode.getType() == TreeNode.Type.LOGICAL_AND) {
+            if (leftNodeType == Node.Type.Number && rightNodeType == Node.Type.Number) {
                 mainType = Node.Type.Number;
             } else {
                 mainType = Node.Type.Boolean;
             }
-        } else if (actionNode.getType() == TreeNode.Type.LOGICAL_OR){
-            if (leftNodeType == Node.Type.Boolean && rightNodeType == Node.Type.Boolean){
+        } else if (actionNode.getType() == TreeNode.Type.LOGICAL_OR) {
+            if (leftNodeType == Node.Type.Boolean && rightNodeType == Node.Type.Boolean) {
                 mainType = Node.Type.Boolean;
             } else {
                 mainType = Node.Type.Number;
             }
-        } else if (actionNode.getType() == TreeNode.Type.LESS_THAN || actionNode.getType() == TreeNode.Type.GREATER_THAN){
+        } else if (actionNode.getType() == TreeNode.Type.LESS_THAN || actionNode.getType() == TreeNode.Type.GREATER_THAN) {
             mainType = Node.Type.Boolean;
+        } else if (actionNode.getType() == TreeNode.Type.BITWISE_AND || actionNode.getType() == TreeNode.Type.BITWISE_OR
+                || actionNode.getType() == TreeNode.Type.BITWISE_XOR) {
+            mainType = Node.Type.Number;
         }
 
 
@@ -192,7 +197,6 @@ public class SemanthicAnalyzer {
 
         return mainType;
     }
-
 
 
     public List<Variable> getVars() {
