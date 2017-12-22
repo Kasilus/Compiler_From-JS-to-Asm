@@ -58,11 +58,22 @@ public class JavaScriptParser implements Parser {
 
         } else if (currentToken.getName().equals("DO")) {
 
-            node = new TreeNode(TreeNode.Type.DO_WHILE, null, statement(), null);
             currentToken = queue.pollFirst();
 
+            node = new TreeNode(TreeNode.Type.DO_WHILE, null, statement(), null);
+
             if (currentToken.getName().equals("WHILE")) {
+
+                currentToken = queue.pollFirst();
+
                 node.setOp2(parenExpr());
+
+                if (!currentToken.getValue().equals(";")) {
+                    throw new SyntacticException("';' expected", currentToken.getPosition());
+                }
+
+                currentToken = queue.pollFirst();
+
             } else {
                 throw new SyntacticException("'while' expected", currentToken.getPosition());
             }
