@@ -51,8 +51,10 @@ public class JavaScriptParser implements Parser {
 
 
         } else if (currentToken.getName().equals("WHILE")) {
+
+            currentToken = queue.pollFirst();
             node = new TreeNode(TreeNode.Type.WHILE, null, parenExpr(), statement());
-//            currentToken = queue.pollFirst();
+
 
         } else if (currentToken.getName().equals("DO")) {
 
@@ -160,10 +162,10 @@ public class JavaScriptParser implements Parser {
 
         TreeNode node = temp6();
 
-        if (currentToken.getValue().equals("||")){
+        if (currentToken.getValue().equals("||")) {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.LOGICAL_OR,null, node, temp5(), positionBuf);
+            node = new TreeNode(TreeNode.Type.LOGICAL_OR, null, node, temp5(), positionBuf);
         }
 
         return node;
@@ -173,10 +175,10 @@ public class JavaScriptParser implements Parser {
     private TreeNode temp6() {
 
         TreeNode node = temp7();
-        if (currentToken.getValue().equals("&&")){
+        if (currentToken.getValue().equals("&&")) {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.LOGICAL_AND,null, node, temp6(), positionBuf);
+            node = new TreeNode(TreeNode.Type.LOGICAL_AND, null, node, temp6(), positionBuf);
         }
 
         return node;
@@ -187,10 +189,10 @@ public class JavaScriptParser implements Parser {
 
         TreeNode node = temp8();
 
-        if (currentToken.getValue().equals("|")){
+        if (currentToken.getValue().equals("|")) {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.BITWISE_OR,null, node, temp7(), positionBuf);
+            node = new TreeNode(TreeNode.Type.BITWISE_OR, null, node, temp7(), positionBuf);
         }
 
         return node;
@@ -201,10 +203,10 @@ public class JavaScriptParser implements Parser {
 
         TreeNode node = temp9();
 
-        if (currentToken.getValue().equals("^")){
+        if (currentToken.getValue().equals("^")) {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.BITWISE_XOR,null, node, temp8(), positionBuf);
+            node = new TreeNode(TreeNode.Type.BITWISE_XOR, null, node, temp8(), positionBuf);
         }
 
         return node;
@@ -215,10 +217,10 @@ public class JavaScriptParser implements Parser {
 
         TreeNode node = temp10();
 
-        if (currentToken.getValue().equals("&")){
+        if (currentToken.getValue().equals("&")) {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.BITWISE_AND,null, node, temp9(), positionBuf);
+            node = new TreeNode(TreeNode.Type.BITWISE_AND, null, node, temp9(), positionBuf);
         }
 
         return node;
@@ -232,16 +234,16 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("==") ||
                 currentToken.getValue().equals("!=") ||
                 currentToken.getValue().equals("===") ||
-                currentToken.getValue().equals("!==")){
+                currentToken.getValue().equals("!==")) {
 
 
             TreeNode.Type type;
 
-            if (currentToken.getValue().equals("==")){
+            if (currentToken.getValue().equals("==")) {
                 type = TreeNode.Type.EQUALITY;
-            } else if (currentToken.getValue().equals("!=")){
+            } else if (currentToken.getValue().equals("!=")) {
                 type = TreeNode.Type.NON_EQUALITY;
-            } else if (currentToken.getValue().equals("===")){
+            } else if (currentToken.getValue().equals("===")) {
                 type = TreeNode.Type.STRICT_EQUALITY;
             } else {
                 type = TreeNode.Type.STRICT_NON_EQUALTIY;
@@ -250,7 +252,7 @@ public class JavaScriptParser implements Parser {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
 
-            node = new TreeNode(type,null, node, temp10(), positionBuf);
+            node = new TreeNode(type, null, node, temp10(), positionBuf);
         }
 
         return node;
@@ -264,16 +266,16 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals(">") ||
                 currentToken.getValue().equals(">=") ||
                 currentToken.getValue().equals("<") ||
-                currentToken.getValue().equals("<=")){
+                currentToken.getValue().equals("<=")) {
 
 
             TreeNode.Type type;
 
-            if (currentToken.getValue().equals(">")){
+            if (currentToken.getValue().equals(">")) {
                 type = TreeNode.Type.GREATER_THAN;
-            } else if (currentToken.getValue().equals(">=")){
+            } else if (currentToken.getValue().equals(">=")) {
                 type = TreeNode.Type.GREATER_THAN_OR_EQUALS;
-            } else if (currentToken.getValue().equals("<")){
+            } else if (currentToken.getValue().equals("<")) {
                 type = TreeNode.Type.LESS_THAN;
             } else {
                 type = TreeNode.Type.LESS_THAN_OR_EQUALS;
@@ -282,7 +284,7 @@ public class JavaScriptParser implements Parser {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
 
-            node = new TreeNode(type,null, node, temp11(), positionBuf);
+            node = new TreeNode(type, null, node, temp11(), positionBuf);
         }
 
         return node;
@@ -303,11 +305,11 @@ public class JavaScriptParser implements Parser {
         TreeNode node = temp14();
 
         if (currentToken.getValue().equals("+") ||
-                currentToken.getValue().equals("-")){
+                currentToken.getValue().equals("-")) {
 
             TreeNode.Type type;
 
-            if (currentToken.getValue().equals("+")){
+            if (currentToken.getValue().equals("+")) {
                 type = TreeNode.Type.ADDITION;
             } else {
                 type = TreeNode.Type.SUBTRACTION;
@@ -316,7 +318,7 @@ public class JavaScriptParser implements Parser {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
 
-            node = new TreeNode(type,null, node, temp13(), positionBuf);
+            node = new TreeNode(type, null, node, temp13(), positionBuf);
         }
 
         return node;
@@ -330,13 +332,13 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getValue().equals("*") ||
                 currentToken.getValue().equals("/") ||
-                currentToken.getValue().equals("%")){
+                currentToken.getValue().equals("%")) {
 
             TreeNode.Type type;
 
-            if (currentToken.getValue().equals("*")){
+            if (currentToken.getValue().equals("*")) {
                 type = TreeNode.Type.MULTIPLICATION;
-            } else if (currentToken.getValue().equals("/")){
+            } else if (currentToken.getValue().equals("/")) {
                 type = TreeNode.Type.DIVISION;
             } else {
                 type = TreeNode.Type.REMAINDER;
@@ -345,7 +347,7 @@ public class JavaScriptParser implements Parser {
             currentToken = queue.pollFirst();
             Position positionBuf = currentToken.getPosition();
 
-            node = new TreeNode(type,null, node, temp14(), positionBuf);
+            node = new TreeNode(type, null, node, temp14(), positionBuf);
         }
 
         return node;
@@ -360,7 +362,6 @@ public class JavaScriptParser implements Parser {
 //
 //    private TreeNode temp17() {
 //    }
-
 
 
     private TreeNode term() {
@@ -390,11 +391,11 @@ public class JavaScriptParser implements Parser {
             node = new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
             currentToken = queue.pollFirst();
             return node;
-        } else if (currentToken.getName().equals("FALSE") || currentToken.getName().equals("TRUE")){
+        } else if (currentToken.getName().equals("FALSE") || currentToken.getName().equals("TRUE")) {
             node = new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
             currentToken = queue.pollFirst();
             return node;
-        }else {
+        } else {
             return parenExpr();
         }
     }

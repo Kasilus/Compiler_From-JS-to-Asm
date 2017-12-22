@@ -6,7 +6,8 @@ public class ToAsmGenerator implements Generator {
 
     private SemanthicAnalyzer semanthicAnalyzer = null;
 
-    private boolean isEaxFree, isEbxFree;
+    private int labelCounter = 1;
+    private StringBuilder expression = new StringBuilder();
 
 
     public ToAsmGenerator(SemanthicAnalyzer semanthicAnalyzer) {
@@ -16,17 +17,21 @@ public class ToAsmGenerator implements Generator {
     @Override
     public void generateCode(TreeNode tree) {
 
-        System.out.print(".386\n.model flat, stdcall\n.data\n");
+        labelCounter = 1;
+
+        expression.append(".386\n.model flat, stdcall\n.data\n");
 
         semanthicAnalyzer.getVariableMap().forEach((x, y) -> {
-            System.out.print(x + " dd ?\n");
+            expression.append(x + " dd ?\n");
         });
 
-        System.out.print(".code\nmain:\n");
+        expression.append(".code\nmain:\n");
 
         generateForNode(tree);
 
-        System.out.print("end main\n");
+        expression.append("end main\n");
+
+        System.out.println(expression.toString());
     }
 
     private Node generateForNode(TreeNode node) {
@@ -54,20 +59,20 @@ public class ToAsmGenerator implements Generator {
 
 
                 if (rightNode instanceof Variable || rightNode instanceof Constant) {
-                    System.out.print("push " + rightNode.getName() + "\n");
+                    expression.append("push " + rightNode.getName() + "\n");
                 }
 
-                System.out.print("pop eax\n");
-                System.out.print("mov " + leftNode.getName() + ", eax\n");
+                expression.append("pop eax\n");
+                expression.append("mov " + leftNode.getName() + ", eax\n");
 
 
             } else if (node.getType() == TreeNode.Type.CONSTANT) {
 
                 String constantValue;
 
-                if (node.getValue().equals("true")){
+                if (node.getValue().equals("true")) {
                     constantValue = "1";
-                } else if (node.getValue().equals("false")){
+                } else if (node.getValue().equals("false")) {
                     constantValue = "0";
                 } else {
                     constantValue = node.getValue();
@@ -76,7 +81,16 @@ public class ToAsmGenerator implements Generator {
                 return new Constant(constantValue, Node.Type.Number);
 
 
-            } else if (node.getType() == TreeNode.Type.ADDITION){
+            } else if (node.getType() == TreeNode.Type.ADDITION ||
+                    node.getType() == TreeNode.Type.SUBTRACTION ||
+                    node.getType() == TreeNode.Type.MULTIPLICATION ||
+                    node.getType() == TreeNode.Type.DIVISION ||
+                    node.getType() == TreeNode.Type.LOGICAL_AND ||
+                    node.getType() == TreeNode.Type.LOGICAL_OR ||
+                    node.getType() == TreeNode.Type.BITWISE_AND ||
+                    node.getType() == TreeNode.Type.BITWISE_OR ||
+                    node.getType() == TreeNode.Type.BITWISE_XOR
+                    ) {
 
 
                 Node leftNode, rightNode;
@@ -84,25 +98,176 @@ public class ToAsmGenerator implements Generator {
                 leftNode = generateForNode(node.getOp1());
 
                 if (leftNode instanceof Variable || leftNode instanceof Constant) {
-                    System.out.print("push " + leftNode.getName() + "\n");
+                    expression.append("push " + leftNode.getName() + "\n");
                 }
 
                 rightNode = generateForNode(node.getOp2());
 
                 if (rightNode instanceof Variable || rightNode instanceof Constant) {
-                    System.out.print("push " + rightNode.getName() + "\n");
+                    expression.append("push " + rightNode.getName() + "\n");
                 }
 
-                System.out.print("pop ebx\n");
-                System.out.print("pop eax\n");
-                System.out.print("add eax, ebx\n");
-                System.out.print("push eax\n");
+                expression.append("pop ebx\n");
+                expression.append("pop eax\n");
+
+                switch (node.getType()) {
+                    case ADDITION:
+                        expression.append("add eax, ebx\n");
+                        break;
+                    case SUBTRACTION:
+                        expression.append("sub eax, ebx\n");
+                        break;
+                    case MULTIPLICATION:
+                        expression.append("imul ebx\n");
+                        break;
+                    case DIVISION:
+                        expression.append("idiv ebx\n");
+                        break;
+                    case BITWISE_AND:
+                        expression.append("and eax, ebx\n");
+                        break;
+                    case LOGICAL_AND:
+                        expression.append("and eax, ebx\n");
+                        break;
+                    case BITWISE_OR:
+                        expression.append("or eax, ebx\n");
+                        break;
+                    case LOGICAL_OR:
+                        expression.append("or eax, ebx\n");
+                        break;
+                    case BITWISE_XOR:
+                        System.out.println("xor eax, ebx\n");
+                        break;
+                }
+
+                expression.append("push eax\n");
 
 
                 return new Node(node.getValue(), Node.Type.Number);
 
 
-            }  else {
+            } else if (node.getType() == TreeNode.Type.EQUALITY ||
+                    node.getType() == TreeNode.Type.NON_EQUALITY ||
+                    node.getType() == TreeNode.Type.STRICT_EQUALITY ||
+                    node.getType() == TreeNode.Type.STRICT_NON_EQUALTIY ||
+                    node.getType() == TreeNode.Type.LESS_THAN ||
+                    node.getType() == TreeNode.Type.GREATER_THAN) {
+
+                Node leftNode, rightNode;
+
+                leftNode = generateForNode(node.getOp1());
+
+                if (leftNode instanceof Variable || leftNode instanceof Constant) {
+                    expression.append("push " + leftNode.getName() + "\n");
+                }
+
+                rightNode = generateForNode(node.getOp2());
+
+                if (rightNode instanceof Variable || rightNode instanceof Constant) {
+                    expression.append("push " + rightNode.getName() + "\n");
+                }
+
+                expression.append("pop ebx\n");
+                expression.append("pop eax\n");
+                expression.append("cmp eax, ebx\n");
+
+                if (node.getType() == TreeNode.Type.EQUALITY ||
+                        node.getType() == TreeNode.Type.NON_EQUALITY ||
+                        node.getType() == TreeNode.Type.STRICT_EQUALITY ||
+                        node.getType() == TreeNode.Type.STRICT_NON_EQUALTIY) {
+                    expression.append("je @label" + labelCounter + "\n");
+
+                } else if (node.getType() == TreeNode.Type.GREATER_THAN) {
+
+                    expression.append("jg @label" + labelCounter + "\n");
+
+                } else if (node.getType() == TreeNode.Type.LESS_THAN) {
+                    expression.append("jl @label" + labelCounter + "\n");
+                }
+
+                expression.append("push 0\n");
+                expression.append("jmp @label" + (labelCounter + 1) + "\n");
+                expression.append("label" + labelCounter + ":\n");
+                expression.append("push 1\n");
+                expression.append("label" + (labelCounter + 1) + ":\n");
+                labelCounter += 2;
+
+                return new Node(node.getValue(), Node.Type.Number);
+
+            } else if (node.getType() == TreeNode.Type.IF) {
+
+                Node leftNode = generateForNode(node.getOp1());
+
+                expression.append("pop eax\n");
+                expression.append("cmp eax, 0\n");
+                expression.append("je @label" + labelCounter + "\n");
+
+                Node rightNode = generateForNode(node.getOp2());
+
+                expression.append("label" + labelCounter + ":\n");
+
+
+                labelCounter++;
+
+
+            } else if (node.getType() == TreeNode.Type.IF_ELSE) {
+
+                Node leftNode = generateForNode(node.getOp1());
+
+                expression.append("pop eax\n");
+                expression.append("cmp eax, 0\n");
+                expression.append("je @label" + labelCounter + "\n");
+
+                Node rightNode = generateForNode(node.getOp2());
+                System.out.println("jmp @label" + (labelCounter + 1));
+
+                expression.append("label" + labelCounter + ":\n");
+                Node rightRightNode = generateForNode(node.getOp3());
+
+                expression.append("label" + (labelCounter + 1) + ":\n");
+
+                labelCounter += 2;
+
+
+            } else if (node.getType() == TreeNode.Type.WHILE) {
+
+                expression.append("label" + labelCounter + ":\n");
+
+                int counterBuf = labelCounter;
+
+                labelCounter++;
+
+                Node leftNode = generateForNode(node.getOp1());
+
+                expression.append("pop eax\n");
+                expression.append("cmp eax, 0\n");
+                expression.append("je @label" + (labelCounter + 1) + "\n");
+
+                Node rightNode = generateForNode(node.getOp2());
+
+                expression.append("jmp @label" + counterBuf + "\n");
+                expression.append("label" + (labelCounter + 1) + ":\n");
+
+                labelCounter++;
+
+
+            } else if (node.getType() == TreeNode.Type.DO_WHILE) {
+
+                expression.append("label" + labelCounter + ":");
+                Node leftNode = generateForNode(node.getOp1());
+
+                Node rightNode = generateForNode(node.getOp2());
+
+                expression.append("pop eax\n");
+                expression.append("cmp eax, 0\n");
+                expression.append("je @label" + (labelCounter + 1) + "\n");
+                System.out.println("jmp @label" + labelCounter + "\n");
+                expression.append("label" + (labelCounter + 1) + ":\n");
+
+                labelCounter += 2;
+
+
+            } else {
                 generateForNode(node.getOp1());
                 generateForNode(node.getOp2());
                 generateForNode(node.getOp3());
