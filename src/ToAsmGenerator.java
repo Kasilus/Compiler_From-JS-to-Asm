@@ -241,30 +241,34 @@ public class ToAsmGenerator implements Generator {
 
                 expression.append("pop eax\n");
                 expression.append("cmp eax, 0\n");
-                expression.append("je @label" + (labelCounter + 1) + "\n");
+                expression.append("je @label" + labelCounter + "\n");
 
                 Node rightNode = generateForNode(node.getOp2());
 
                 expression.append("jmp @label" + counterBuf + "\n");
-                expression.append("label" + (labelCounter + 1) + ":\n");
+                expression.append("label" + labelCounter + ":\n");
 
                 labelCounter++;
 
 
             } else if (node.getType() == TreeNode.Type.DO_WHILE) {
 
-                expression.append("label" + labelCounter + ":");
+                expression.append("label" + labelCounter + ":\n");
+
+                int counterBuf = labelCounter;
+                labelCounter++;
+
                 Node leftNode = generateForNode(node.getOp1());
 
                 Node rightNode = generateForNode(node.getOp2());
 
                 expression.append("pop eax\n");
                 expression.append("cmp eax, 0\n");
-                expression.append("je @label" + (labelCounter + 1) + "\n");
-                System.out.println("jmp @label" + labelCounter + "\n");
-                expression.append("label" + (labelCounter + 1) + ":\n");
+                expression.append("je @label" + labelCounter + "\n");
+                expression.append("jmp @label" + counterBuf + "\n");
+                expression.append("label" + labelCounter + ":\n");
 
-                labelCounter += 2;
+                labelCounter++;
 
 
             } else {
