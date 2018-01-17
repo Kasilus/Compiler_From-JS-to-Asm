@@ -5,15 +5,23 @@ import constructions.Variable;
 import java.util.*;
 
 
-public class SemanthicAnalyzer {
+public class JavaScriptSemanticAnalyzer {
 
     private List<Variable> vars = new ArrayList<>();
     private Map<String, Variable> variableMap = new LinkedHashMap<>();
     private TreeNode.Type currentType;
 
-    public Node checkTypes(TreeNode tree) {
+    public boolean areTypesCorrect(TreeNode tree) {
 
-        return getNode(tree);
+        try {
+            getNode(tree);
+        } catch (SemanthicException e){
+            e.printStackTrace();
+        } catch (Exception e){
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -141,7 +149,7 @@ public class SemanthicAnalyzer {
 
     }
 
-    public static boolean isInteger(String s) {
+    private static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);
         } catch (NumberFormatException e) {
