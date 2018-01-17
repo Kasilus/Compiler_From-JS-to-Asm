@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 
 public class Run {
@@ -10,7 +11,7 @@ public class Run {
 
 //        String expression = "{var a = 12; var b = 1; if (a > b) {a = a + b;} else {b = a + b;} }";
 
-        String expression = "{var a = 12; var b = 5; while (b>a) {b = b & 1; } }";
+//        String expression = "{var a = 12; var b = 5; while (b>a) {b = b & 1; } }";
 
 //        String expression = "{var a = 12; var b = 5; do {b = b - 1; } while (b>a);  }";
 
@@ -18,11 +19,13 @@ public class Run {
 
 //        String expression = "{if (a + 2) b = 3 else g -2 ; a = 5;}";
 
+
+        String expression = readExpressionFromFile("input.txt");
+
         Lexer lexer = new JavaScriptLexer();
         lexer.setExpression(expression);
         lexer.outputExpression();
         lexer.analise();
-        lexer.outputLexerTable();
 
         ArrayList<LexerToken> lexemeTable = (ArrayList<LexerToken>) lexer.getLexemeTable();
 
@@ -33,17 +36,58 @@ public class Run {
             tree = parser.parse(lexemeTable);
         }
 
-        System.out.println(tree);
-
         SemanthicAnalyzer semanthicAnalyzer = new SemanthicAnalyzer();
         semanthicAnalyzer.checkTypes(tree);
 
-        System.out.println(tree + "\n");
-
         Generator generator = new ToAsmGenerator(semanthicAnalyzer);
-        generator.generateCode(tree);
+        String generatedCode = generator.generateCode(tree);
+
+        writeExpressionToFile(generatedCode, "output.txt");
 
 
     }
+
+    private static String readExpressionFromFile(String fileName){
+
+        StringBuilder expression = new StringBuilder();
+
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))){
+
+            String currentLine;
+
+            if ((currentLine= br.readLine()) != null){
+                expression.append(currentLine);
+            }
+
+            while ((currentLine = br.readLine()) != null) {
+                expression.append("\n").append(currentLine);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return expression.toString();
+
+    }
+
+    private static void writeExpressionToFile(String expression, String fileName){
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))) {
+
+            bw.write(expression);
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
+
+
 
 }

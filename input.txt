@@ -1,0 +1,7 @@
+{
+    var a = 12;
+    var b = 5;
+    do {
+        b = b - 1; }
+    while (b>a);
+}

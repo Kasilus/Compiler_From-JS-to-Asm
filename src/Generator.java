@@ -1,5 +1,5 @@
 public interface Generator {
 
-    public void generateCode(TreeNode tree);
+    public String generateCode(TreeNode tree);
 
 }

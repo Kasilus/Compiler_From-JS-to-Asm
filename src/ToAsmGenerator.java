@@ -15,7 +15,7 @@ public class ToAsmGenerator implements Generator {
     }
 
     @Override
-    public void generateCode(TreeNode tree) {
+    public String generateCode(TreeNode tree) {
 
         labelCounter = 1;
 
@@ -31,7 +31,7 @@ public class ToAsmGenerator implements Generator {
 
         expression.append("end main\n");
 
-        System.out.println(expression.toString());
+        return expression.toString();
     }
 
     private Node generateForNode(TreeNode node) {
