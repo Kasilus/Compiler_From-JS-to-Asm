@@ -234,8 +234,6 @@ public class ToAsmGenerator implements Generator {
                 StringBuilder expressionBuf = expression;
                 expression = new StringBuilder();
 
-//                expression.append("jmp @label" + (labelCounter + 1) + "\n");
-
                 expression.append("label" + labelCounter + ":\n");
                 Node rightRightNode = generateForNode(node.getOp3());
 
@@ -262,9 +260,15 @@ public class ToAsmGenerator implements Generator {
 
                 expression.append("pop eax\n");
                 expression.append("cmp eax, 0\n");
-                expression.append("je @label" + labelCounter + "\n");
+
+                StringBuilder expressionBuf = expression;
+                expression = new StringBuilder();
 
                 Node rightNode = generateForNode(node.getOp2());
+
+                expressionBuf.append("je @label" + labelCounter + "\n");
+                expressionBuf.append(expression);
+                expression = expressionBuf;
 
                 expression.append("jmp @label" + counterBuf + "\n");
                 expression.append("label" + labelCounter + ":\n");

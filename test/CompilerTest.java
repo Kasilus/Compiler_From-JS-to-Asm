@@ -11,8 +11,8 @@ import static org.junit.Assert.assertEquals;
 
 public class CompilerTest {
 
-    static Compiler compiler;
-    String inputExpression, outputExpression, expectedExpression;
+    private static Compiler compiler;
+    private String inputExpression, outputExpression, expectedExpression;
 
     @BeforeClass
     public static void initCompiler(){
@@ -447,6 +447,278 @@ public class CompilerTest {
         assertEquals(expectedExpression, outputExpression);
 
     }
+
+    @Test
+    public void cycleWhileWithBranchingTest(){
+
+        inputExpression = "{\n" +
+                "    var a = 5;\n" +
+                "    var b = 6;\n" +
+                "\n" +
+                "    while (b>a) {\n" +
+                "\n" +
+                "        if (a === b){\n" +
+                "            b = b & 1;\n" +
+                "        } else {\n" +
+                "            a = 3;\n" +
+                "        }\n" +
+                "    }\n" +
+                "\n" +
+                "\n" +
+                "}";
+
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
+                ".model flat, stdcall\n" +
+                ".data\n" +
+                "a dd ?\n" +
+                "b dd ?\n" +
+                ".code\n" +
+                "main:\n" +
+                "push 5\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "push 6\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "label1:\n" +
+                "push b\n" +
+                "push a\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "jg @label2\n" +
+                "push 0\n" +
+                "jmp @label3\n" +
+                "label2:\n" +
+                "push 1\n" +
+                "label3:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label8\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "je @label4\n" +
+                "push 0\n" +
+                "jmp @label5\n" +
+                "label4:\n" +
+                "push 1\n" +
+                "label5:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label6\n" +
+                "push b\n" +
+                "push 1\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "and eax, ebx\n" +
+                "push eax\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "jmp @label7\n" +
+                "label6:\n" +
+                "push 3\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "label7:\n" +
+                "jmp @label1\n" +
+                "label8:\n" +
+                "end main\n";
+
+        assertEquals(expectedExpression, outputExpression);
+
+    }
+
+    @Test
+    public void cycleDoWhileWithBranchingTest(){
+
+        inputExpression = "{   var a = 12;\n" +
+                "    var b = 5;\n" +
+                "\n" +
+                "    do {\n" +
+                "\n" +
+                "           if (a === b){\n" +
+                "                       b = b & 1;\n" +
+                "                   } else {\n" +
+                "                       a = 3;\n" +
+                "                   }\n" +
+                "\n" +
+                "        } while (b<a);\n" +
+                "\n" +
+                "}";
+
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
+                ".model flat, stdcall\n" +
+                ".data\n" +
+                "a dd ?\n" +
+                "b dd ?\n" +
+                ".code\n" +
+                "main:\n" +
+                "push 12\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "push 5\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "label1:\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "je @label2\n" +
+                "push 0\n" +
+                "jmp @label3\n" +
+                "label2:\n" +
+                "push 1\n" +
+                "label3:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label4\n" +
+                "push b\n" +
+                "push 1\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "and eax, ebx\n" +
+                "push eax\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "jmp @label5\n" +
+                "label4:\n" +
+                "push 3\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "label5:\n" +
+                "push b\n" +
+                "push a\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "jl @label6\n" +
+                "push 0\n" +
+                "jmp @label7\n" +
+                "label6:\n" +
+                "push 1\n" +
+                "label7:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label8\n" +
+                "jmp @label1\n" +
+                "label8:\n" +
+                "end main\n";
+
+        assertEquals(expectedExpression, outputExpression);
+
+    }
+
+    @Test
+    public void cycleWhileWithComplicatedBranchingTest(){
+        inputExpression = "{\n" +
+                "    var a = 5;\n" +
+                "    var b = 6;\n" +
+                "\n" +
+                "    while (b>a) {\n" +
+                "\n" +
+                "        if (a === b){\n" +
+                "            b = b & 1;\n" +
+                "        } else if (a < b) {\n" +
+                "            a = 3;\n" +
+                "        } else {\n" +
+                "            b = 12;\n" +
+                "        }\n" +
+                "    }\n" +
+                "\n" +
+                "\n" +
+                "}";
+
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
+                ".model flat, stdcall\n" +
+                ".data\n" +
+                "a dd ?\n" +
+                "b dd ?\n" +
+                ".code\n" +
+                "main:\n" +
+                "push 5\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "push 6\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "label1:\n" +
+                "push b\n" +
+                "push a\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "jg @label2\n" +
+                "push 0\n" +
+                "jmp @label3\n" +
+                "label2:\n" +
+                "push 1\n" +
+                "label3:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label12\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "je @label4\n" +
+                "push 0\n" +
+                "jmp @label5\n" +
+                "label4:\n" +
+                "push 1\n" +
+                "label5:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label6\n" +
+                "push b\n" +
+                "push 1\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "and eax, ebx\n" +
+                "push eax\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "jmp @label11\n" +
+                "label6:\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "jl @label6\n" +
+                "push 0\n" +
+                "jmp @label7\n" +
+                "label6:\n" +
+                "push 1\n" +
+                "label7:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label8\n" +
+                "push 3\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "jmp @label9\n" +
+                "label8:\n" +
+                "push 12\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "label9:\n" +
+                "label11:\n" +
+                "jmp @label1\n" +
+                "label12:\n" +
+                "end main\n";
+
+        assertEquals(expectedExpression, outputExpression);
+    }
+
 
     @Test(expected = LexicalException.class)
     public void lexicalErrorTest(){

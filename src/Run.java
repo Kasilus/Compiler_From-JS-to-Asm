@@ -8,11 +8,11 @@ public class Run {
     public static void main(String[] args) {
 
         // args[0]
-        String inputExpression = readExpressionFromFile("testfiles/input/input.txt");
+        String inputExpression = readExpressionFromFile("testfiles/input/input4.txt");
         Compiler compiler = new FromJavaScriptToAsmCompiler();
         String outputExpression = compiler.compile(inputExpression);
         // args[1]
-        writeExpressionToFile(outputExpression, "testfiles/output/output.txt");
+        writeExpressionToFile(outputExpression, "testfiles/output/output4.txt");
 
     }
 
