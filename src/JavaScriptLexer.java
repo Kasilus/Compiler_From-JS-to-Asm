@@ -1,3 +1,6 @@
+import errors.ExceptionPosition;
+import errors.LexicalException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +13,6 @@ public class JavaScriptLexer implements Lexer {
     private int currentRow = 1;
     private int currentCol = 1;
 
-    /**
-     * Init tokens for javascript lexer
-     */
     public JavaScriptLexer() {
 
         lexemeTable = new ArrayList<>();
@@ -151,12 +151,12 @@ public class JavaScriptLexer implements Lexer {
                         currentPosition++;
 
                         if (Character.isLetter(expression.charAt(currentPosition))) {
-                            throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.", new Position(currentRow, currentCol));
+                            throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.", new ExceptionPosition(currentRow, currentCol));
                         } else if (currentCharacter == '.'){
                             if (!hasPoint) {
                                 hasPoint = true;
                             } else {
-                                throw new LexicalException("Allowed just one point in a constant", new Position(currentRow, currentCol));
+                                throw new LexicalException("Allowed just one point in a constant", new ExceptionPosition(currentRow, currentCol));
                             }
                         }
 
@@ -166,7 +166,7 @@ public class JavaScriptLexer implements Lexer {
                 } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)) || currentCharacter == '.');
 
 
-                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, new Position((currentRow), currentCol - currentLexeme.length())));
+                lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, new ExceptionPosition((currentRow), currentCol - currentLexeme.length())));
                 continue outerLoop;
 
             }
@@ -191,14 +191,13 @@ public class JavaScriptLexer implements Lexer {
 
                 for (int i = 0; i < tokens.length; i++) {
                     if (tokens[i].getValue().equals(currentLexeme)) {
-                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, new Position(currentRow, currentCol - currentLexeme.length())));
-//                        currentPosition++;
+                        lexemeTable.add(new LexerToken(tokens[i].getName(), currentLexeme, LexerToken.Type.WORD, new ExceptionPosition(currentRow, currentCol - currentLexeme.length())));
                         continue outerLoop;
                     }
                 }
 
 
-                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, new Position(currentRow, currentCol - currentLexeme.length())));
+                lexemeTable.add(new LexerToken("VARIABLE", currentLexeme, LexerToken.Type.VAR, new ExceptionPosition(currentRow, currentCol - currentLexeme.length())));
                 continue;
 
 
@@ -243,7 +242,7 @@ public class JavaScriptLexer implements Lexer {
 
 
                 if (symbolToken != null) {
-                    lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), new Position((currentRow), currentCol - currentLexeme.length() + 1)));
+                    lexemeTable.add(new LexerToken(symbolToken.getName(), symbolToken.getValue(), symbolToken.getType(), new ExceptionPosition((currentRow), currentCol - currentLexeme.length() + 1)));
                     // correction of cur pos
                     currentPosition = currentPosition - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
                     currentCol = currentCol - (MAX_SYMBOL_LENGTH - symbolToken.getValue().length()) + 1;
@@ -253,7 +252,7 @@ public class JavaScriptLexer implements Lexer {
                     continue outerLoop;
                 } else {
                     currentCol = currentCol - MAX_SYMBOL_LENGTH + 1;
-                    throw new LexicalException("Unexpected symbol combination!", new Position(currentRow, currentCol));
+                    throw new LexicalException("Unexpected symbol combination!", new ExceptionPosition(currentRow, currentCol));
                 }
 
             }
@@ -269,7 +268,7 @@ public class JavaScriptLexer implements Lexer {
             }
 
             // throw exception if mismatch
-            throw new LexicalException("Unexpected character! : '" + currentLexeme + "'", new Position(currentRow, currentCol));
+            throw new LexicalException("Unexpected character! : '" + currentLexeme + "'", new ExceptionPosition(currentRow, currentCol));
 
 
         }

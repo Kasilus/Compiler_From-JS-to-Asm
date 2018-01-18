@@ -1,3 +1,5 @@
+import errors.LexicalException;
+
 import java.util.List;
 
 public interface Lexer {

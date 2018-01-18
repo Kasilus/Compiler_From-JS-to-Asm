@@ -1,3 +1,5 @@
+import errors.ExceptionPosition;
+
 public class LexerToken {
 
     enum Type {
@@ -6,7 +8,7 @@ public class LexerToken {
 
     private String name, value;
     private Type type;
-    private Position position;
+    private ExceptionPosition position;
 
     public LexerToken(String name, String value, Type type) {
         this.name = name;
@@ -14,7 +16,7 @@ public class LexerToken {
         this.type = type;
     }
 
-    public LexerToken(String name, String value, Type type, Position position) {
+    public LexerToken(String name, String value, Type type, ExceptionPosition position) {
         this.name = name;
         this.value = value;
         this.type = type;
@@ -45,11 +47,11 @@ public class LexerToken {
         this.type = type;
     }
 
-    public Position getPosition() {
+    public ExceptionPosition getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(ExceptionPosition position) {
         this.position = position;
     }
 }

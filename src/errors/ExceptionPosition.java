@@ -1,9 +1,11 @@
-public class Position {
+package errors;
+
+public class ExceptionPosition {
 
     private int row;
     private int column;
 
-    public Position(int row, int column) {
+    public ExceptionPosition(int row, int column) {
         this.row = row;
         this.column = column;
     }
@@ -26,6 +28,6 @@ public class Position {
 
     @Override
     public String toString() {
-        return "Position: Row = " + row + ", Column = " + column;
+        return "errors.Position: Row = " + row + ", Column = " + column;
     }
 }

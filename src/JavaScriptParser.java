@@ -1,6 +1,6 @@
-import jdk.nashorn.internal.parser.Token;
+import errors.ExceptionPosition;
+import errors.SyntacticException;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -107,7 +107,7 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getValue().equals("=")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.ASSIGNMENT, null, node, expression(), positionBuf);
 
         }
@@ -149,7 +149,7 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getName().equals("ASSIGNMENT")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.ASSIGNMENT, null, node, expression(), positionBuf);
         }
 
@@ -176,7 +176,7 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getValue().equals("||")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.LOGICAL_OR, null, node, temp5(), positionBuf);
         }
 
@@ -189,7 +189,7 @@ public class JavaScriptParser implements Parser {
         TreeNode node = temp7();
         if (currentToken.getValue().equals("&&")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.LOGICAL_AND, null, node, temp6(), positionBuf);
         }
 
@@ -203,7 +203,7 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getValue().equals("|")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.BITWISE_OR, null, node, temp7(), positionBuf);
         }
 
@@ -217,7 +217,7 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getValue().equals("^")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.BITWISE_XOR, null, node, temp8(), positionBuf);
         }
 
@@ -231,7 +231,7 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getValue().equals("&")) {
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
             node = new TreeNode(TreeNode.Type.BITWISE_AND, null, node, temp9(), positionBuf);
         }
 
@@ -262,7 +262,7 @@ public class JavaScriptParser implements Parser {
             }
 
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
 
             node = new TreeNode(type, null, node, temp10(), positionBuf);
         }
@@ -294,7 +294,7 @@ public class JavaScriptParser implements Parser {
             }
 
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
 
             node = new TreeNode(type, null, node, temp11(), positionBuf);
         }
@@ -328,7 +328,7 @@ public class JavaScriptParser implements Parser {
             }
 
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
 
             node = new TreeNode(type, null, node, temp13(), positionBuf);
         }
@@ -357,7 +357,7 @@ public class JavaScriptParser implements Parser {
             }
 
             currentToken = queue.pollFirst();
-            Position positionBuf = currentToken.getPosition();
+            ExceptionPosition positionBuf = currentToken.getPosition();
 
             node = new TreeNode(type, null, node, temp14(), positionBuf);
         }

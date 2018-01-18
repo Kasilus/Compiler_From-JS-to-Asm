@@ -1,6 +1,7 @@
 import constructions.Constant;
 import constructions.Node;
 import constructions.Variable;
+import errors.SemanticException;
 
 import java.util.*;
 

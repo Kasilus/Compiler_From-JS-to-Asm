@@ -1,3 +1,5 @@
+import errors.ExceptionPosition;
+
 public class TreeNode {
 
     private Type type;
@@ -5,7 +7,7 @@ public class TreeNode {
     private TreeNode op1;
     private TreeNode op2;
     private TreeNode op3;
-    private Position position;
+    private ExceptionPosition position;
 
     enum Type {
         EMPTY,PROGRAM, STATEMENT, EXPRESSION, TEST, VARIABLE, CONSTANT,
@@ -52,7 +54,7 @@ public class TreeNode {
         this.op2 = op2;
     }
 
-    public TreeNode(Type type, String value, TreeNode op1, TreeNode op2, Position position) {
+    public TreeNode(Type type, String value, TreeNode op1, TreeNode op2, ExceptionPosition position) {
         this.type = type;
         this.value = value;
         this.op1 = op1;
@@ -60,7 +62,7 @@ public class TreeNode {
         this.position = position;
     }
 
-    public TreeNode(Type type, String value, TreeNode op1, TreeNode op2, TreeNode op3, Position position) {
+    public TreeNode(Type type, String value, TreeNode op1, TreeNode op2, TreeNode op3, ExceptionPosition position) {
         this.type = type;
         this.value = value;
         this.op1 = op1;
@@ -101,11 +103,11 @@ public class TreeNode {
         this.op2 = op2;
     }
 
-    public Position getPosition() {
+    public ExceptionPosition getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(ExceptionPosition position) {
         this.position = position;
     }
 
