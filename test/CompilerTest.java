@@ -274,6 +274,96 @@ public class CompilerTest {
     }
 
     @Test
+    public void complicatedBranchingTest(){
+
+        inputExpression = "{var a = 12;\n" +
+                "    var b = 1;\n" +
+                "\n" +
+                " if (a > b) {\n" +
+                "         a = a + b;\n" +
+                "     } else if (a < 3) {\n" +
+                "         b = a + b;\n" +
+                "     } else {\n" +
+                "        a = 3;\n" +
+                "        }\n" +
+                "\n" +
+                "     }";
+
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
+                ".model flat, stdcall\n" +
+                ".data\n" +
+                "a dd ?\n" +
+                "b dd ?\n" +
+                ".code\n" +
+                "main:\n" +
+                "push 12\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "push 1\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "jg @label1\n" +
+                "push 0\n" +
+                "jmp @label2\n" +
+                "label1:\n" +
+                "push 1\n" +
+                "label2:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label3\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "add eax, ebx\n" +
+                "push eax\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "jmp @label8\n" +
+                "label3:\n" +
+                "push a\n" +
+                "push 3\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "cmp eax, ebx\n" +
+                "jl @label3\n" +
+                "push 0\n" +
+                "jmp @label4\n" +
+                "label3:\n" +
+                "push 1\n" +
+                "label4:\n" +
+                "pop eax\n" +
+                "cmp eax, 0\n" +
+                "je @label5\n" +
+                "push a\n" +
+                "push b\n" +
+                "pop ebx\n" +
+                "pop eax\n" +
+                "add eax, ebx\n" +
+                "push eax\n" +
+                "pop eax\n" +
+                "mov b, eax\n" +
+                "jmp @label6\n" +
+                "label5:\n" +
+                "push 3\n" +
+                "pop eax\n" +
+                "mov a, eax\n" +
+                "label6:\n" +
+                "label8:\n" +
+                "end main\n";
+
+        assertEquals(expectedExpression, outputExpression);
+
+
+    }
+
+    @Test
     public void cycleTest(){
 
         inputExpression = "{\n" +
