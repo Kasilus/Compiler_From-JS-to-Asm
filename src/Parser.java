@@ -1,7 +1,8 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Parser {
 
-    public TreeNode parse(ArrayList<LexerToken> lexemeTable);
+    public TreeNode parse(List<LexerToken> lexemeTable);
 
 }

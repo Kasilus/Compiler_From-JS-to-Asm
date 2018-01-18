@@ -4,13 +4,13 @@ import constructions.Variable;
 
 public class ToAsmGenerator implements Generator {
 
-    private SemanthicAnalyzer semanthicAnalyzer = null;
+    private SemanticAnalyzer semanthicAnalyzer = null;
 
     private int labelCounter = 1;
     private StringBuilder expression = new StringBuilder();
 
 
-    public ToAsmGenerator(SemanthicAnalyzer semanthicAnalyzer) {
+    public ToAsmGenerator(SemanticAnalyzer semanthicAnalyzer) {
         this.semanthicAnalyzer = semanthicAnalyzer;
     }
 
@@ -136,7 +136,7 @@ public class ToAsmGenerator implements Generator {
                         expression.append("or eax, ebx\n");
                         break;
                     case BITWISE_XOR:
-                        System.out.println("xor eax, ebx\n");
+                        expression.append("xor eax, ebx\n");
                         break;
                 }
 
@@ -219,7 +219,7 @@ public class ToAsmGenerator implements Generator {
                 expression.append("je @label" + labelCounter + "\n");
 
                 Node rightNode = generateForNode(node.getOp2());
-                System.out.println("jmp @label" + (labelCounter + 1));
+                expression.append("jmp @label" + (labelCounter + 1) + "\n");
 
                 expression.append("label" + labelCounter + ":\n");
                 Node rightRightNode = generateForNode(node.getOp3());

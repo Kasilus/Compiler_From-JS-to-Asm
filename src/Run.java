@@ -1,49 +1,13 @@
 import java.io.*;
-import java.util.ArrayList;
 
 public class Run {
 
     public static void main(String[] args) {
 
-//        String expression = "{ \n if (a = 12) \n b = 6; else \n  a = 5; \n}";
-
-//        String expression = "{var a = true, b = false; a === b; var g = false; g === a;}";
-
-//        String expression = "{var a = 12; var b = 1; if (a > b) {a = a + b;} else {b = a + b;} }";
-
-//        String expression = "{var a = 12; var b = 5; while (b>a) {b = b & 1; } }";
-
-//        String expression = "{var a = 12; var b = 5; do {b = b - 1; } while (b>a);  }";
-
-//        String expression = "{ var a = false; var b = 50; var c = 2 + 3; }";
-
-//        String expression = "{if (a + 2) b = 3 else g -2 ; a = 5;}";
-
-
-        String expression = readExpressionFromFile("input.txt");
-
-        Lexer lexer = new JavaScriptLexer();
-        lexer.setExpression(expression);
-        lexer.outputExpression();
-        lexer.analise();
-
-        ArrayList<LexerToken> lexemeTable = (ArrayList<LexerToken>) lexer.getLexemeTable();
-
-        Parser parser = new JavaScriptParser();
-        TreeNode tree = null;
-
-        if (lexemeTable.size() > 0){
-            tree = parser.parse(lexemeTable);
-        }
-
-        SemanthicAnalyzer semanthicAnalyzer = new SemanthicAnalyzer();
-        semanthicAnalyzer.checkTypes(tree);
-
-        Generator generator = new ToAsmGenerator(semanthicAnalyzer);
-        String generatedCode = generator.generateCode(tree);
-
-        writeExpressionToFile(generatedCode, "output.txt");
-
+        String inputExpression = readExpressionFromFile("testfiles/input/input10.txt");
+        Compiler compiler = new FromJavaScriptToAsmCompiler();
+        String outputExpression = compiler.compile(inputExpression);
+        writeExpressionToFile(outputExpression, "testfiles/output/output10.txt");
 
     }
 
@@ -76,7 +40,7 @@ public class Run {
 
     private static void writeExpressionToFile(String expression, String fileName){
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
 
             bw.write(expression);
 

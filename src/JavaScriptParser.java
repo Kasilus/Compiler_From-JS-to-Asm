@@ -2,6 +2,7 @@ import jdk.nashorn.internal.parser.Token;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class JavaScriptParser implements Parser {
 
@@ -9,7 +10,7 @@ public class JavaScriptParser implements Parser {
     LinkedList<LexerToken> queue;
 
     @Override
-    public TreeNode parse(ArrayList<LexerToken> lexemeTable) {
+    public TreeNode parse(List<LexerToken> lexemeTable) {
 
         queue = new LinkedList<>(lexemeTable);
         currentToken = queue.pollFirst();

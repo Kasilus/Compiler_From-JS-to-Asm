@@ -310,6 +310,13 @@ public class JavaScriptLexer implements Lexer {
         this.expression = expression;
     }
 
+    @Override
+    public void createLexemeTableFromExpression(String expression){
+        setExpression(expression);
+        outputExpression();
+        analise();
+    }
+
 
     @Override
     public List<LexerToken> getLexemeTable() {

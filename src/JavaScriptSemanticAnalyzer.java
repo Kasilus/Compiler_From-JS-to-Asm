@@ -5,16 +5,17 @@ import constructions.Variable;
 import java.util.*;
 
 
-public class JavaScriptSemanticAnalyzer {
+public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
 
     private List<Variable> vars = new ArrayList<>();
     private Map<String, Variable> variableMap = new LinkedHashMap<>();
     private TreeNode.Type currentType;
 
-    public boolean areTypesCorrect(TreeNode tree) {
+    @Override
+    public boolean areAllTypesCorrect(TreeNode parseTree) {
 
         try {
-            getNode(tree);
+            getNode(parseTree);
         } catch (SemanthicException e){
             e.printStackTrace();
         } catch (Exception e){
@@ -76,7 +77,10 @@ public class JavaScriptSemanticAnalyzer {
 
 
                 Variable leftNode = (Variable) getNode(node.getOp1());
+                TreeNode.Type bufCurrentType = currentType;
+                currentType = null;
                 Node rightNode = getNode(node.getOp2());
+                currentType = bufCurrentType;
 
                 if (currentType != null) {
                     leftNode.setType(rightNode.getType());
@@ -206,7 +210,6 @@ public class JavaScriptSemanticAnalyzer {
         return mainType;
     }
 
-
     public List<Variable> getVars() {
         return vars;
     }
@@ -215,6 +218,7 @@ public class JavaScriptSemanticAnalyzer {
         this.vars = vars;
     }
 
+    @Override
     public Map<String, Variable> getVariableMap() {
         return variableMap;
     }
