@@ -1,5 +1,8 @@
+package parser;
+
 import errors.ExceptionPosition;
 import errors.SyntacticException;
+import lexer.LexerToken;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +18,7 @@ public class JavaScriptParser implements Parser {
         queue = new LinkedList<>(lexemeTable);
         currentToken = queue.pollFirst();
 
-        TreeNode node = new TreeNode(TreeNode.Type.PROGRAM, null, statement(), null);
+        TreeNode node = new TreeNode(Type.PROGRAM, null, statement(), null);
 
         return node;
 
@@ -28,23 +31,23 @@ public class JavaScriptParser implements Parser {
 
         if (currentToken.getName().equals("LEFT BRACE")) {
 
-            node = new TreeNode(TreeNode.Type.EMPTY, null, null);
+            node = new TreeNode(Type.EMPTY, null, null);
             currentToken = queue.pollFirst();
 
             while (!currentToken.getName().equals("RIGHT BRACE")) {
-                node = new TreeNode(TreeNode.Type.STATEMENT, null, node, statement());
+                node = new TreeNode(Type.STATEMENT, null, node, statement());
             }
 
             currentToken = queue.pollFirst();
         } else if (currentToken.getName().equals("SEMICOLON")) {
-            node = new TreeNode(TreeNode.Type.EMPTY, null, null);
+            node = new TreeNode(Type.EMPTY, null, null);
         } else if (currentToken.getName().equals("IF")) {
 
             currentToken = queue.pollFirst();
-            node = new TreeNode(TreeNode.Type.IF, null, parenExpr(), statement());
+            node = new TreeNode(Type.IF, null, parenExpr(), statement());
 
             if (currentToken.getName().equals("ELSE")) {
-                node.setType(TreeNode.Type.IF_ELSE);
+                node.setType(Type.IF_ELSE);
 
                 currentToken = queue.pollFirst();
                 node.setOp3(statement());
@@ -54,14 +57,14 @@ public class JavaScriptParser implements Parser {
         } else if (currentToken.getName().equals("WHILE")) {
 
             currentToken = queue.pollFirst();
-            node = new TreeNode(TreeNode.Type.WHILE, null, parenExpr(), statement());
+            node = new TreeNode(Type.WHILE, null, parenExpr(), statement());
 
 
         } else if (currentToken.getName().equals("DO")) {
 
             currentToken = queue.pollFirst();
 
-            node = new TreeNode(TreeNode.Type.DO_WHILE, null, statement(), null);
+            node = new TreeNode(Type.DO_WHILE, null, statement(), null);
 
             if (currentToken.getName().equals("WHILE")) {
 
@@ -81,11 +84,11 @@ public class JavaScriptParser implements Parser {
 
         } else if (currentToken.getName().equals("VARIABLE TYPE")) {
 
-            node = new TreeNode(TreeNode.Type.VARIABLE_TYPE, currentToken.getValue(), varAssignment(), null);
+            node = new TreeNode(Type.VARIABLE_TYPE, currentToken.getValue(), varAssignment(), null);
             currentToken = queue.pollFirst();
 
         } else {
-            node = new TreeNode(TreeNode.Type.EXPRESSION, expression(), null);
+            node = new TreeNode(Type.EXPRESSION, expression(), null);
             if (!currentToken.getValue().equals(";")) {
                 throw new SyntacticException("';' expected", currentToken.getPosition());
             }
@@ -108,7 +111,7 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("=")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.ASSIGNMENT, null, node, expression(), positionBuf);
+            node = new TreeNode(Type.ASSIGNMENT, null, node, expression(), positionBuf);
 
         }
 
@@ -123,7 +126,7 @@ public class JavaScriptParser implements Parser {
 
         while (currentToken.getValue().equals(",")) {
 
-            node = new TreeNode(TreeNode.Type.COMMA, node, assignment());
+            node = new TreeNode(Type.COMMA, node, assignment());
 
         }
 
@@ -143,14 +146,14 @@ public class JavaScriptParser implements Parser {
             throw new SyntacticException("var expected", currentToken.getPosition());
         }
 
-        node = new TreeNode(TreeNode.Type.VARIABLE, currentToken.getValue(), null, null, currentToken.getPosition());
+        node = new TreeNode(Type.VARIABLE, currentToken.getValue(), null, null, currentToken.getPosition());
         currentToken = queue.pollFirst();
 
 
         if (currentToken.getName().equals("ASSIGNMENT")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.ASSIGNMENT, null, node, expression(), positionBuf);
+            node = new TreeNode(Type.ASSIGNMENT, null, node, expression(), positionBuf);
         }
 
 
@@ -163,7 +166,7 @@ public class JavaScriptParser implements Parser {
         TreeNode node = temp5();
 //        if (currentToken.getName().equals("?")){
 //            currentToken = queue.pollFirst();
-//            node = new TreeNode(TreeNo)
+//            node = new parser.TreeNode(TreeNo)
 //        }
 
         return node;
@@ -177,7 +180,7 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("||")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.LOGICAL_OR, null, node, temp5(), positionBuf);
+            node = new TreeNode(Type.LOGICAL_OR, null, node, temp5(), positionBuf);
         }
 
         return node;
@@ -190,7 +193,7 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("&&")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.LOGICAL_AND, null, node, temp6(), positionBuf);
+            node = new TreeNode(Type.LOGICAL_AND, null, node, temp6(), positionBuf);
         }
 
         return node;
@@ -204,7 +207,7 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("|")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.BITWISE_OR, null, node, temp7(), positionBuf);
+            node = new TreeNode(Type.BITWISE_OR, null, node, temp7(), positionBuf);
         }
 
         return node;
@@ -218,7 +221,7 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("^")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.BITWISE_XOR, null, node, temp8(), positionBuf);
+            node = new TreeNode(Type.BITWISE_XOR, null, node, temp8(), positionBuf);
         }
 
         return node;
@@ -232,7 +235,7 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("&")) {
             currentToken = queue.pollFirst();
             ExceptionPosition positionBuf = currentToken.getPosition();
-            node = new TreeNode(TreeNode.Type.BITWISE_AND, null, node, temp9(), positionBuf);
+            node = new TreeNode(Type.BITWISE_AND, null, node, temp9(), positionBuf);
         }
 
         return node;
@@ -249,16 +252,16 @@ public class JavaScriptParser implements Parser {
                 currentToken.getValue().equals("!==")) {
 
 
-            TreeNode.Type type;
+            Type type;
 
             if (currentToken.getValue().equals("==")) {
-                type = TreeNode.Type.EQUALITY;
+                type = Type.EQUALITY;
             } else if (currentToken.getValue().equals("!=")) {
-                type = TreeNode.Type.NON_EQUALITY;
+                type = Type.NON_EQUALITY;
             } else if (currentToken.getValue().equals("===")) {
-                type = TreeNode.Type.STRICT_EQUALITY;
+                type = Type.STRICT_EQUALITY;
             } else {
-                type = TreeNode.Type.STRICT_NON_EQUALTIY;
+                type = Type.STRICT_NON_EQUALTIY;
             }
 
             currentToken = queue.pollFirst();
@@ -281,16 +284,16 @@ public class JavaScriptParser implements Parser {
                 currentToken.getValue().equals("<=")) {
 
 
-            TreeNode.Type type;
+            Type type;
 
             if (currentToken.getValue().equals(">")) {
-                type = TreeNode.Type.GREATER_THAN;
+                type = Type.GREATER_THAN;
             } else if (currentToken.getValue().equals(">=")) {
-                type = TreeNode.Type.GREATER_THAN_OR_EQUALS;
+                type = Type.GREATER_THAN_OR_EQUALS;
             } else if (currentToken.getValue().equals("<")) {
-                type = TreeNode.Type.LESS_THAN;
+                type = Type.LESS_THAN;
             } else {
-                type = TreeNode.Type.LESS_THAN_OR_EQUALS;
+                type = Type.LESS_THAN_OR_EQUALS;
             }
 
             currentToken = queue.pollFirst();
@@ -319,12 +322,12 @@ public class JavaScriptParser implements Parser {
         if (currentToken.getValue().equals("+") ||
                 currentToken.getValue().equals("-")) {
 
-            TreeNode.Type type;
+            Type type;
 
             if (currentToken.getValue().equals("+")) {
-                type = TreeNode.Type.ADDITION;
+                type = Type.ADDITION;
             } else {
-                type = TreeNode.Type.SUBTRACTION;
+                type = Type.SUBTRACTION;
             }
 
             currentToken = queue.pollFirst();
@@ -346,14 +349,14 @@ public class JavaScriptParser implements Parser {
                 currentToken.getValue().equals("/") ||
                 currentToken.getValue().equals("%")) {
 
-            TreeNode.Type type;
+            Type type;
 
             if (currentToken.getValue().equals("*")) {
-                type = TreeNode.Type.MULTIPLICATION;
+                type = Type.MULTIPLICATION;
             } else if (currentToken.getValue().equals("/")) {
-                type = TreeNode.Type.DIVISION;
+                type = Type.DIVISION;
             } else {
-                type = TreeNode.Type.REMAINDER;
+                type = Type.REMAINDER;
             }
 
             currentToken = queue.pollFirst();
@@ -366,13 +369,13 @@ public class JavaScriptParser implements Parser {
 
     }
 
-//    private TreeNode temp15() {
+//    private parser.TreeNode temp15() {
 //    }
 //
-//    private TreeNode temp16() {
+//    private parser.TreeNode temp16() {
 //    }
 //
-//    private TreeNode temp17() {
+//    private parser.TreeNode temp17() {
 //    }
 
 
@@ -380,31 +383,31 @@ public class JavaScriptParser implements Parser {
         TreeNode node = null;
 
         if (currentToken.getValue().equals("-") || currentToken.getValue().equals("+")) {
-            node = new TreeNode(TreeNode.Type.UNARY, currentToken.getValue(), null, null);
+            node = new TreeNode(Type.UNARY, currentToken.getValue(), null, null);
             currentToken = queue.pollFirst();
             if (currentToken.getType().equals(LexerToken.Type.VAR)) {
-                node.setOp1(new TreeNode(TreeNode.Type.VARIABLE, currentToken.getValue(), null, null, currentToken.getPosition()));
+                node.setOp1(new TreeNode(Type.VARIABLE, currentToken.getValue(), null, null, currentToken.getPosition()));
                 currentToken = queue.pollFirst();
             } else if (currentToken.getType().equals(LexerToken.Type.CONSTANT)) {
-                node.setOp1(new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition()));
+                node.setOp1(new TreeNode(Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition()));
                 currentToken = queue.pollFirst();
             }
             return node;
 
         } else if (currentToken.getType() == LexerToken.Type.VAR) {
 
-            node = new TreeNode(TreeNode.Type.VARIABLE, currentToken.getValue(), null, null, currentToken.getPosition());
+            node = new TreeNode(Type.VARIABLE, currentToken.getValue(), null, null, currentToken.getPosition());
             currentToken = queue.pollFirst();
 
             return node;
 
 
         } else if (currentToken.getType() == LexerToken.Type.CONSTANT) {
-            node = new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
+            node = new TreeNode(Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
             currentToken = queue.pollFirst();
             return node;
         } else if (currentToken.getName().equals("FALSE") || currentToken.getName().equals("TRUE")) {
-            node = new TreeNode(TreeNode.Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
+            node = new TreeNode(Type.CONSTANT, currentToken.getValue(), null, null, currentToken.getPosition());
             currentToken = queue.pollFirst();
             return node;
         } else {

@@ -1,4 +1,4 @@
-package constructions;
+package semantic;
 
 public class Constant extends Node {
 

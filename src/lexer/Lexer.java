@@ -1,3 +1,5 @@
+package lexer;
+
 import errors.LexicalException;
 
 import java.util.List;

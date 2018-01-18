@@ -1,3 +1,5 @@
+import compiler.Compiler;
+import compiler.FromJavaScriptToAsmCompiler;
 import errors.LexicalException;
 import errors.SemanticException;
 import errors.SyntacticException;

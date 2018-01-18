@@ -1,4 +1,6 @@
-import constructions.Variable;
+package semantic;
+
+import parser.TreeNode;
 
 import java.util.Map;
 

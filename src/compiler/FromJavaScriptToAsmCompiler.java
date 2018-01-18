@@ -1,3 +1,15 @@
+package compiler;
+
+import generator.Generator;
+import generator.ToAsmGenerator;
+import lexer.JavaScriptLexer;
+import lexer.Lexer;
+import parser.JavaScriptParser;
+import parser.Parser;
+import parser.TreeNode;
+import semantic.JavaScriptSemanticAnalyzer;
+import semantic.SemanticAnalyzer;
+
 public class FromJavaScriptToAsmCompiler implements Compiler {
 
 

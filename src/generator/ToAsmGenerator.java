@@ -1,6 +1,14 @@
-import constructions.Constant;
-import constructions.Node;
-import constructions.Variable;
+package generator;
+
+import parser.TreeNode;
+import parser.Type;
+import semantic.Constant;
+import semantic.Node;
+import semantic.SemanticAnalyzer;
+import semantic.Variable;
+
+import static parser.Type.*;
+
 
 public class ToAsmGenerator implements Generator {
 
@@ -40,18 +48,18 @@ public class ToAsmGenerator implements Generator {
         if (node != null) {
 
 
-            if (node.getType() == TreeNode.Type.VARIABLE_TYPE) {
+            if (node.getType() == Type.VARIABLE_TYPE) {
 
                 generateForNode(node.getOp1());
                 generateForNode(node.getOp2());
 
 
-            } else if (node.getType() == TreeNode.Type.VARIABLE) {
+            } else if (node.getType() == Type.VARIABLE) {
 
                 return semanthicAnalyzer.getVariableMap().get(node.getValue());
 
 
-            } else if (node.getType() == TreeNode.Type.ASSIGNMENT) {
+            } else if (node.getType() == Type.ASSIGNMENT) {
 
                 Node leftNode = generateForNode(node.getOp1());
 
@@ -66,7 +74,7 @@ public class ToAsmGenerator implements Generator {
                 expression.append("mov " + leftNode.getName() + ", eax\n");
 
 
-            } else if (node.getType() == TreeNode.Type.CONSTANT) {
+            } else if (node.getType() == Type.CONSTANT) {
 
                 String constantValue;
 
@@ -81,15 +89,15 @@ public class ToAsmGenerator implements Generator {
                 return new Constant(constantValue, Node.Type.Number);
 
 
-            } else if (node.getType() == TreeNode.Type.ADDITION ||
-                    node.getType() == TreeNode.Type.SUBTRACTION ||
-                    node.getType() == TreeNode.Type.MULTIPLICATION ||
-                    node.getType() == TreeNode.Type.DIVISION ||
-                    node.getType() == TreeNode.Type.LOGICAL_AND ||
-                    node.getType() == TreeNode.Type.LOGICAL_OR ||
-                    node.getType() == TreeNode.Type.BITWISE_AND ||
-                    node.getType() == TreeNode.Type.BITWISE_OR ||
-                    node.getType() == TreeNode.Type.BITWISE_XOR
+            } else if (node.getType() == ADDITION ||
+                    node.getType() == Type.SUBTRACTION ||
+                    node.getType() == Type.MULTIPLICATION ||
+                    node.getType() == Type.DIVISION ||
+                    node.getType() == Type.LOGICAL_AND ||
+                    node.getType() == Type.LOGICAL_OR ||
+                    node.getType() == Type.BITWISE_AND ||
+                    node.getType() == Type.BITWISE_OR ||
+                    node.getType() == Type.BITWISE_XOR
                     ) {
 
 
@@ -146,12 +154,12 @@ public class ToAsmGenerator implements Generator {
                 return new Node(node.getValue(), Node.Type.Number);
 
 
-            } else if (node.getType() == TreeNode.Type.EQUALITY ||
-                    node.getType() == TreeNode.Type.NON_EQUALITY ||
-                    node.getType() == TreeNode.Type.STRICT_EQUALITY ||
-                    node.getType() == TreeNode.Type.STRICT_NON_EQUALTIY ||
-                    node.getType() == TreeNode.Type.LESS_THAN ||
-                    node.getType() == TreeNode.Type.GREATER_THAN) {
+            } else if (node.getType() == Type.EQUALITY ||
+                    node.getType() == Type.NON_EQUALITY ||
+                    node.getType() == Type.STRICT_EQUALITY ||
+                    node.getType() == Type.STRICT_NON_EQUALTIY ||
+                    node.getType() == Type.LESS_THAN ||
+                    node.getType() == Type.GREATER_THAN) {
 
                 Node leftNode, rightNode;
 
@@ -171,17 +179,17 @@ public class ToAsmGenerator implements Generator {
                 expression.append("pop eax\n");
                 expression.append("cmp eax, ebx\n");
 
-                if (node.getType() == TreeNode.Type.EQUALITY ||
-                        node.getType() == TreeNode.Type.NON_EQUALITY ||
-                        node.getType() == TreeNode.Type.STRICT_EQUALITY ||
-                        node.getType() == TreeNode.Type.STRICT_NON_EQUALTIY) {
+                if (node.getType() == Type.EQUALITY ||
+                        node.getType() == Type.NON_EQUALITY ||
+                        node.getType() == Type.STRICT_EQUALITY ||
+                        node.getType() == Type.STRICT_NON_EQUALTIY) {
                     expression.append("je @label" + labelCounter + "\n");
 
-                } else if (node.getType() == TreeNode.Type.GREATER_THAN) {
+                } else if (node.getType() == Type.GREATER_THAN) {
 
                     expression.append("jg @label" + labelCounter + "\n");
 
-                } else if (node.getType() == TreeNode.Type.LESS_THAN) {
+                } else if (node.getType() == Type.LESS_THAN) {
                     expression.append("jl @label" + labelCounter + "\n");
                 }
 
@@ -194,7 +202,7 @@ public class ToAsmGenerator implements Generator {
 
                 return new Node(node.getValue(), Node.Type.Number);
 
-            } else if (node.getType() == TreeNode.Type.IF) {
+            } else if (node.getType() == Type.IF) {
 
                 Node leftNode = generateForNode(node.getOp1());
 
@@ -210,7 +218,7 @@ public class ToAsmGenerator implements Generator {
                 labelCounter++;
 
 
-            } else if (node.getType() == TreeNode.Type.IF_ELSE) {
+            } else if (node.getType() == Type.IF_ELSE) {
 
                 Node leftNode = generateForNode(node.getOp1());
 
@@ -229,7 +237,7 @@ public class ToAsmGenerator implements Generator {
                 labelCounter += 2;
 
 
-            } else if (node.getType() == TreeNode.Type.WHILE) {
+            } else if (node.getType() == Type.WHILE) {
 
                 expression.append("label" + labelCounter + ":\n");
 
@@ -251,7 +259,7 @@ public class ToAsmGenerator implements Generator {
                 labelCounter++;
 
 
-            } else if (node.getType() == TreeNode.Type.DO_WHILE) {
+            } else if (node.getType() == Type.DO_WHILE) {
 
                 expression.append("label" + labelCounter + ":\n");
 

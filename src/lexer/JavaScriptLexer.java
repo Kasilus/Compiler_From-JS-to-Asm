@@ -1,3 +1,5 @@
+package lexer;
+
 import errors.ExceptionPosition;
 import errors.LexicalException;
 

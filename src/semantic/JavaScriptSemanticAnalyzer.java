@@ -1,7 +1,8 @@
-import constructions.Constant;
-import constructions.Node;
-import constructions.Variable;
+package semantic;
+
 import errors.SemanticException;
+import parser.TreeNode;
+import parser.Type;
 
 import java.util.*;
 
@@ -10,7 +11,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
 
     private List<Variable> vars = new ArrayList<>();
     private Map<String, Variable> variableMap = new LinkedHashMap<>();
-    private TreeNode.Type currentType;
+    private Type currentType;
 
     @Override
     public boolean areAllTypesCorrect(TreeNode parseTree) {
@@ -28,7 +29,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
         if (node != null) {
 
 
-            if (node.getType() == TreeNode.Type.VARIABLE_TYPE) {
+            if (node.getType() == Type.VARIABLE_TYPE) {
 
                 currentType = node.getType();
                 getNode(node.getOp1());
@@ -36,7 +37,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
                 currentType = null;
 
 
-            } else if (node.getType() == TreeNode.Type.VARIABLE) {
+            } else if (node.getType() == Type.VARIABLE) {
 
                 if (currentType != null) {
 
@@ -68,11 +69,11 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
 
                 }
 
-            } else if (node.getType() == TreeNode.Type.ASSIGNMENT) {
+            } else if (node.getType() == Type.ASSIGNMENT) {
 
 
                 Variable leftNode = (Variable) getNode(node.getOp1());
-                TreeNode.Type bufCurrentType = currentType;
+                Type bufCurrentType = currentType;
                 currentType = null;
                 Node rightNode = getNode(node.getOp2());
                 currentType = bufCurrentType;
@@ -85,27 +86,27 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
                 }
 
 
-            } else if (node.getType() == TreeNode.Type.CONSTANT) {
+            } else if (node.getType() == Type.CONSTANT) {
 
                 Node.Type type = recognizeType(node.getValue());
                 return new Constant(node.getValue(), type);
 
 
-            } else if (node.getType() == TreeNode.Type.ADDITION ||
-                    node.getType() == TreeNode.Type.SUBTRACTION ||
-                    node.getType() == TreeNode.Type.MULTIPLICATION ||
-                    node.getType() == TreeNode.Type.DIVISION ||
-                    node.getType() == TreeNode.Type.EQUALITY ||
-                    node.getType() == TreeNode.Type.NON_EQUALITY ||
-                    node.getType() == TreeNode.Type.STRICT_EQUALITY ||
-                    node.getType() == TreeNode.Type.STRICT_NON_EQUALTIY ||
-                    node.getType() == TreeNode.Type.LOGICAL_AND ||
-                    node.getType() == TreeNode.Type.LOGICAL_OR ||
-                    node.getType() == TreeNode.Type.BITWISE_AND ||
-                    node.getType() == TreeNode.Type.BITWISE_OR ||
-                    node.getType() == TreeNode.Type.BITWISE_XOR ||
-                    node.getType() == TreeNode.Type.LESS_THAN ||
-                    node.getType() == TreeNode.Type.GREATER_THAN
+            } else if (node.getType() == Type.ADDITION ||
+                    node.getType() == Type.SUBTRACTION ||
+                    node.getType() == Type.MULTIPLICATION ||
+                    node.getType() == Type.DIVISION ||
+                    node.getType() == Type.EQUALITY ||
+                    node.getType() == Type.NON_EQUALITY ||
+                    node.getType() == Type.STRICT_EQUALITY ||
+                    node.getType() == Type.STRICT_NON_EQUALTIY ||
+                    node.getType() == Type.LOGICAL_AND ||
+                    node.getType() == Type.LOGICAL_OR ||
+                    node.getType() == Type.BITWISE_AND ||
+                    node.getType() == Type.BITWISE_OR ||
+                    node.getType() == Type.BITWISE_XOR ||
+                    node.getType() == Type.LESS_THAN ||
+                    node.getType() == Type.GREATER_THAN
                     ) {
 
                 Node leftNode, rightNode;
@@ -123,7 +124,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
                     throw new SemanticException("Incompatible types!", node.getPosition());
                 }
 
-            } else if (node.getType() == TreeNode.Type.UNARY) {
+            } else if (node.getType() == Type.UNARY) {
                 return new Node(node.getValue(), getNode(node.getOp1()).getType());
             } else {
                 getNode(node.getOp1());
@@ -166,33 +167,33 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
         Node.Type leftNodeType = leftNode.getType();
         Node.Type rightNodeType = rightNode.getType();
 
-        if (actionNode.getType() == TreeNode.Type.ASSIGNMENT) {
+        if (actionNode.getType() == Type.ASSIGNMENT) {
             mainType = rightNodeType;
-        } else if (actionNode.getType() == TreeNode.Type.STRICT_EQUALITY || actionNode.getType() == TreeNode.Type.STRICT_NON_EQUALTIY) {
+        } else if (actionNode.getType() == Type.STRICT_EQUALITY || actionNode.getType() == Type.STRICT_NON_EQUALTIY) {
 
             if (leftNodeType == rightNodeType) {
                 mainType = leftNodeType;
             }
 
-        } else if (actionNode.getType() == TreeNode.Type.ADDITION || actionNode.getType() == TreeNode.Type.SUBTRACTION ||
-                actionNode.getType() == TreeNode.Type.MULTIPLICATION || actionNode.getType() == TreeNode.Type.DIVISION) {
+        } else if (actionNode.getType() == Type.ADDITION || actionNode.getType() == Type.SUBTRACTION ||
+                actionNode.getType() == Type.MULTIPLICATION || actionNode.getType() == Type.DIVISION) {
             mainType = Node.Type.Number;
-        } else if (actionNode.getType() == TreeNode.Type.LOGICAL_AND) {
+        } else if (actionNode.getType() == Type.LOGICAL_AND) {
             if (leftNodeType == Node.Type.Number && rightNodeType == Node.Type.Number) {
                 mainType = Node.Type.Number;
             } else {
                 mainType = Node.Type.Boolean;
             }
-        } else if (actionNode.getType() == TreeNode.Type.LOGICAL_OR) {
+        } else if (actionNode.getType() == Type.LOGICAL_OR) {
             if (leftNodeType == Node.Type.Boolean && rightNodeType == Node.Type.Boolean) {
                 mainType = Node.Type.Boolean;
             } else {
                 mainType = Node.Type.Number;
             }
-        } else if (actionNode.getType() == TreeNode.Type.LESS_THAN || actionNode.getType() == TreeNode.Type.GREATER_THAN) {
+        } else if (actionNode.getType() == Type.LESS_THAN || actionNode.getType() == Type.GREATER_THAN) {
             mainType = Node.Type.Boolean;
-        } else if (actionNode.getType() == TreeNode.Type.BITWISE_AND || actionNode.getType() == TreeNode.Type.BITWISE_OR
-                || actionNode.getType() == TreeNode.Type.BITWISE_XOR) {
+        } else if (actionNode.getType() == Type.BITWISE_AND || actionNode.getType() == Type.BITWISE_OR
+                || actionNode.getType() == Type.BITWISE_XOR) {
             mainType = Node.Type.Number;
         }
 
@@ -222,11 +223,11 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
         this.variableMap = variableMap;
     }
 
-    public TreeNode.Type getCurrentType() {
+    public Type getCurrentType() {
         return currentType;
     }
 
-    public void setCurrentType(TreeNode.Type currentType) {
+    public void setCurrentType(Type currentType) {
         this.currentType = currentType;
     }
 

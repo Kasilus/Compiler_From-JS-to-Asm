@@ -1,3 +1,6 @@
+import compiler.Compiler;
+import compiler.FromJavaScriptToAsmCompiler;
+
 import java.io.*;
 
 public class Run {

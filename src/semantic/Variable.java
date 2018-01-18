@@ -1,4 +1,4 @@
-package constructions;
+package semantic;
 
 public class Variable extends Node {
 

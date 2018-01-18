@@ -1,8 +1,10 @@
+package lexer;
+
 import errors.ExceptionPosition;
 
 public class LexerToken {
 
-    enum Type {
+    public enum Type {
         VAR, CONSTANT, SYMBOL, WORD, EOF
     }
 
