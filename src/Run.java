@@ -7,10 +7,10 @@ public class Run {
 
     public static void main(String[] args) {
 
-        String inputExpression = readExpressionFromFile("testfiles/input/input10.txt");
+        String inputExpression = readExpressionFromFile(args[0]);
         Compiler compiler = new FromJavaScriptToAsmCompiler();
         String outputExpression = compiler.compile(inputExpression);
-        writeExpressionToFile(outputExpression, "testfiles/output/output10.txt");
+        writeExpressionToFile(outputExpression, args[1]);
 
     }
 
