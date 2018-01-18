@@ -1,21 +1,30 @@
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class CompilerTest {
 
-    Compiler compiler;
+    static Compiler compiler;
+    String inputExpression, outputExpression, expectedExpression;
+
+    @BeforeClass
+    public static void initCompiler(){
+        compiler = new FromJavaScriptToAsmCompiler();
+    }
 
     @Before
-    public void initCompiler(){
-        compiler = new FromJavaScriptToAsmCompiler();
+    public void clearExpressions(){
+        inputExpression = null;
+        outputExpression = null;
+        expectedExpression = null;
     }
 
     @Test
     public void initialisationTest(){
 
-        String inputExpression = "{\n" +
+        inputExpression = "{\n" +
                 "    var a = 2;\n" +
                 "    var b = 6;\n" +
                 "    var c = a + b;\n" +
@@ -24,8 +33,8 @@ public class CompilerTest {
                 "    b = 12 / a;\n" +
                 "};";
 
-        String outputExpression = compiler.compile(inputExpression);
-        String expectedExpression = ".386\n" +
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
                 ".model flat, stdcall\n" +
                 ".data\n" +
                 "a dd ?\n" +
@@ -75,7 +84,7 @@ public class CompilerTest {
     @Test
     public void arithmeticTest(){
 
-        String inputExpression = "{\n" +
+        inputExpression = "{\n" +
                 "    var a = 2;\n" +
                 "    var b = 6;\n" +
                 "    var c = a * b;\n" +
@@ -88,8 +97,8 @@ public class CompilerTest {
                 "    c = b ^ g;\n" +
                 "};";
 
-        String outputExpression = compiler.compile(inputExpression);
-        String expectedExpression = ".386\n" +
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
                 ".model flat, stdcall\n" +
                 ".data\n" +
                 "a dd ?\n" +
@@ -168,7 +177,7 @@ public class CompilerTest {
     @Test
     public void branchingTest(){
 
-        String inputExpression = "{\n" +
+        inputExpression = "{\n" +
                 "    var a = 12;\n" +
                 "    var b = 1;\n" +
                 "    if (a === b) {\n" +
@@ -182,8 +191,8 @@ public class CompilerTest {
                 "    }\n" +
                 "};";
 
-        String outputExpression = compiler.compile(inputExpression);
-        String expectedExpression = ".386\n" +
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
                 ".model flat, stdcall\n" +
                 ".data\n" +
                 "a dd ?\n" +
@@ -262,7 +271,7 @@ public class CompilerTest {
     @Test
     public void cycleTest(){
 
-        String inputExpression = "{\n" +
+        inputExpression = "{\n" +
                 "    var a = 12;\n" +
                 "    var b = 5;\n" +
                 "    while (b>a) {\n" +
@@ -274,8 +283,8 @@ public class CompilerTest {
                 "    } while (b<a);\n" +
                 "};";
 
-        String outputExpression = compiler.compile(inputExpression);
-        String expectedExpression = ".386\n" +
+        outputExpression = compiler.compile(inputExpression);
+        expectedExpression = ".386\n" +
                 ".model flat, stdcall\n" +
                 ".data\n" +
                 "a dd ?\n" +
@@ -341,6 +350,42 @@ public class CompilerTest {
                 "end main\n";
 
         assertEquals(expectedExpression, outputExpression);
+
+    }
+
+    @Test(expected = LexicalException.class)
+    public void lexicalErrorTest(){
+
+        inputExpression = "{\n" +
+                "var 1a = 1;\n" +
+                "};";
+
+        compiler.compile(inputExpression);
+
+
+    }
+
+    @Test(expected = SyntacticException.class)
+    public void syntacticErrorTest(){
+
+        inputExpression = "{\n" +
+                "var a = 1 * ( 2 + 3 ;\n" +
+                "};";
+
+        compiler.compile(inputExpression);
+
+    }
+
+    @Test(expected = SemanticException.class)
+    public void semanticErrorTest(){
+
+        inputExpression = "{\n" +
+                "var a = 1;\n" +
+                "var b = true;\n" +
+                "var c = a === b;\n" +
+                "};";
+
+        compiler.compile(inputExpression);
 
     }
 

@@ -14,13 +14,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
     @Override
     public boolean areAllTypesCorrect(TreeNode parseTree) {
 
-        try {
             getNode(parseTree);
-        } catch (SemanthicException e){
-            e.printStackTrace();
-        } catch (Exception e){
-            return false;
-        }
 
         return true;
 
@@ -57,7 +51,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
 
                     } else {
 
-                        throw new SemanthicException("Variable '" + curVariable.getName() + "' has already assigned!", node.getPosition());
+                        throw new SemanticException("Variable '" + curVariable.getName() + "' has already assigned!", node.getPosition());
 
                     }
 
@@ -68,7 +62,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
                     if (curVariable != null) {
                         return curVariable;
                     } else {
-                        throw new SemanthicException("Variable '" + node.getValue() + "' hasn't been assigned!", node.getPosition());
+                        throw new SemanticException("Variable '" + node.getValue() + "' hasn't been assigned!", node.getPosition());
                     }
 
                 }
@@ -125,7 +119,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
                     return new Node(node.getValue(), mainType);
 
                 } else {
-                    throw new SemanthicException("Incompatible types!", node.getPosition());
+                    throw new SemanticException("Incompatible types!", node.getPosition());
                 }
 
             } else if (node.getType() == TreeNode.Type.UNARY) {
@@ -203,7 +197,7 @@ public class JavaScriptSemanticAnalyzer implements SemanticAnalyzer {
 
 
         if (mainType == null) {
-            throw new SemanthicException("Invalid operands to " + actionNode.getType().getOutName() + " (have '" + leftNode.getType() +
+            throw new SemanticException("Invalid operands to " + actionNode.getType().getOutName() + " (have '" + leftNode.getType() +
                     "' and '" + rightNode.getType() + "') ", actionNode.getPosition());
         }
 
