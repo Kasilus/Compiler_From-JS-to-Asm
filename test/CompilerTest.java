@@ -36,7 +36,7 @@ public class CompilerTest {
                 "    a = 2 + 6;\n" +
                 "    b = false;\n" +
                 "    b = 12 / a;\n" +
-                "};";
+                "};\n";
 
         outputExpression = compiler.compile(inputExpression);
         expectedExpression = ".386\n" +

@@ -154,7 +154,7 @@ public class JavaScriptLexer implements Lexer {
 
                         if (Character.isLetter(expression.charAt(currentPosition))) {
                             throw new LexicalException("Wrong variable assignment! Variable can't start from the digit.", new ExceptionPosition(currentRow, currentCol));
-                        } else if (currentCharacter == '.'){
+                        } else if (currentCharacter == '.') {
                             if (!hasPoint) {
                                 hasPoint = true;
                             } else {
@@ -163,9 +163,9 @@ public class JavaScriptLexer implements Lexer {
                         }
 
 
-
                     }
-                } while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)) || currentCharacter == '.');
+                }
+                while (Character.isDigit(currentCharacter = expression.charAt(currentPosition)) || currentCharacter == '.');
 
 
                 lexemeTable.add(new LexerToken("CONSTANT", currentLexeme, LexerToken.Type.CONSTANT, new ExceptionPosition((currentRow), currentCol - currentLexeme.length())));
@@ -259,13 +259,15 @@ public class JavaScriptLexer implements Lexer {
 
             }
 
-            if (currentCharacter == '\n'){
+            if (currentCharacter == '\n') {
 
-                    currentRow++;
-                    currentCol = 1;
-                    currentPosition++;
+                currentRow++;
+                currentCol = 1;
+                currentPosition++;
+                if (currentPosition < expression.length()) {
                     currentCharacter = expression.charAt(currentPosition);
-                    continue outerLoop;
+                }
+                continue outerLoop;
 
             }
 
@@ -280,13 +282,13 @@ public class JavaScriptLexer implements Lexer {
 
     @Override
     public void outputExpression() {
-        if (lexemeTable == null){
+        if (lexemeTable == null) {
             return;
         }
 
         String[] rows = expression.split("\n");
 
-        for (int i = 0 ; i < rows.length; i++){
+        for (int i = 0; i < rows.length; i++) {
             System.out.println(rows[i]);
         }
 
@@ -295,12 +297,12 @@ public class JavaScriptLexer implements Lexer {
 
     @Override
     public void outputLexerTable() {
-        if (lexemeTable == null){
+        if (lexemeTable == null) {
             return;
         }
 
 
-        for (LexerToken token : lexemeTable){
+        for (LexerToken token : lexemeTable) {
 
             System.out.print(token.getValue() + "\t\t\t\t|" + token.getName() + "\n");
         }
@@ -312,7 +314,7 @@ public class JavaScriptLexer implements Lexer {
     }
 
     @Override
-    public void createLexemeTableFromExpression(String expression){
+    public void createLexemeTableFromExpression(String expression) {
         setExpression(expression);
         outputExpression();
         analise();
